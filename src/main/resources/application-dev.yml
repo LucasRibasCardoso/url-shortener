@@ -1,0 +1,15 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+aws:
+  dynamodb:
+    endpoint: http://localhost:4566
+    region: us-east-1
+    access-key: test
+    secret-key: test
+  cloud:
+    credentials:
+      use-default-aws-credentials-chain: false

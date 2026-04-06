@@ -1,0 +1,28 @@
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: url-shortener-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - local-net
+
+  localstack:
+    image: localstack/localstack:3.0.0
+    container_name: url-shortener-aws
+    ports:
+      - "127.0.0.1:4566:4566"
+    environment:
+      - SERVICES=dynamodb
+      - DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    volumes:
+      - ./localstack-init:/etc/localstack/init/ready.d
+    networks:
+      - local-net
+
+networks:
+  local-net:
+    driver: bridge

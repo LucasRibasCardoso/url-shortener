@@ -1,7 +1,7 @@
 services:
   redis:
     image: redis:7.2-alpine
-    container_name: url-shortener-redis
+    container_name: originalUrl-shortener-redis
     ports:
       - "6379:6379"
     command: redis-server --save 60 1 --loglevel warning
@@ -10,7 +10,7 @@ services:
 
   localstack:
     image: localstack/localstack:3.0.0
-    container_name: url-shortener-aws
+    container_name: originalUrl-shortener-aws
     ports:
       - "127.0.0.1:4566:4566"
     environment:

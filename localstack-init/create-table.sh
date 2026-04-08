@@ -22,8 +22,8 @@ fi
 
 "${DDB_CMD[@]}" create-table \
     --table-name url \
-    --attribute-definitions AttributeName=shortcode,AttributeType=S \
-    --key-schema AttributeName=shortcode,KeyType=HASH \
+    --attribute-definitions AttributeName=shortCode,AttributeType=S \
+    --key-schema AttributeName=shortCode,KeyType=HASH \
     --billing-mode PAY_PER_REQUEST \
     --region "$REGION"
 

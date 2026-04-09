@@ -2,6 +2,7 @@ package com.app.url_shortener.presentation.controller;
 
 import com.app.url_shortener.application.usecase.ShortenUrlUseCase;
 import com.app.url_shortener.domain.model.Url;
+import com.app.url_shortener.presentation.docs.UrlShortenerControllerDocs;
 import com.app.url_shortener.presentation.dto.request.ShortenUrlRequest;
 import com.app.url_shortener.presentation.dto.response.UrlResponse;
 import jakarta.validation.Valid;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/shorten")
-public class UrlShortenerController {
+public class UrlShortenerController implements UrlShortenerControllerDocs {
 
   private final String baseUrl;
   private final ShortenUrlUseCase shortenUrlUseCase;

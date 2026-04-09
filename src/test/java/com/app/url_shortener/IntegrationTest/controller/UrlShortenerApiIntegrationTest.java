@@ -33,7 +33,6 @@ import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
 public class UrlShortenerApiIntegrationTest extends AbstractIntegrationTest {
 
   @Autowired private DynamoDbClient dynamoDbClient;
-  @MockitoBean private UrlRepositoryPort urlRepositoryPortMock;
 
   @Value("${aws.dynamodb.table-name}")
   private String tableName;
@@ -122,7 +121,7 @@ public class UrlShortenerApiIntegrationTest extends AbstractIntegrationTest {
 
       // Act
       Response response =
-              given().when().get("/" + invalidShortCode).then().statusCode(404).extract().response();
+          given().when().get("/" + invalidShortCode).then().statusCode(404).extract().response();
 
       // Assert
       response.then().body("title", equalTo("Não encontrado"));
@@ -133,6 +132,8 @@ public class UrlShortenerApiIntegrationTest extends AbstractIntegrationTest {
   @DisplayName("Cenários de Error 409")
   class BusinessRulesScenarios {
 
+    @MockitoBean private UrlRepositoryPort urlRepositoryPortMock;
+
     @Test
     @DisplayName("Deve retornar 409 se ocorrer uma colisão interna de shortCode gerado")
     void shouldReturnConflictWhenInternalCollisionOccurs() {
@@ -142,7 +143,8 @@ public class UrlShortenerApiIntegrationTest extends AbstractIntegrationTest {
       ShortenUrlRequest request = new ShortenUrlRequest("https://www.google.com");
 
       // Act
-      Response response = given()
+      Response response =
+          given()
               .contentType(ContentType.JSON)
               .body(request)
               .when()

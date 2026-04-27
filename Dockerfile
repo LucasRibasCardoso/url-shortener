@@ -1,25 +1,31 @@
-FROM maven:3.9.4-eclipse-temurin-21 AS builder
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
 
 WORKDIR /app
+
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+
+RUN --mount=type=cache,target=/root/.m2 \mvn dependency:go-offline -B
 
 COPY src ./src
-RUN mvn clean package -DskipTests
+
+RUN --mount=type=cache,target=/root/.m2 \mvn clean package -DskipTests
 
 
 FROM eclipse-temurin:21-jre-alpine
-RUN apk add --no-cache curl tzdata
+
+RUN apk add --no-cache tzdata \
+    && addgroup -S appgroup \
+    && adduser -S appuser -G appgroup
 
 ENV TZ=America/Sao_Paulo
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=America/Sao_Paulo"
 
 WORKDIR /app
+
 COPY --from=builder --chown=appuser:appgroup /app/target/*.jar app.jar
 
 USER appuser
+
 EXPOSE 8080
 
-ENV OTEL_SDK_DISABLED=true
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
-ENTRYPOINT ["sh", "-c", "unset JAVA_TOOL_OPTIONS; java $JAVA_OPTS -Duser.timezone=America/Sao_Paulo -Djava.security.egd=file:/dev/./urandom -jar app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

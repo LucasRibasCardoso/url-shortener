@@ -1,7 +1,7 @@
 package com.app.url_shortener.url.domain.model;
 
-import com.app.url_shortener.url.domain.exception.validation.OriginalUrlRequiredException;
-import com.app.url_shortener.url.domain.exception.validation.ShortCodeRequiredException;
+import com.app.url_shortener.url.domain.exception.OriginalUrlRequiredException;
+import com.app.url_shortener.url.domain.exception.ShortCodeRequiredException;
 import lombok.Getter;
 
 import java.io.Serializable;

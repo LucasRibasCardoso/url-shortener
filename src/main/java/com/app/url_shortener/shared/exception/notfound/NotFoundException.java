@@ -1,7 +1,7 @@
-package com.app.url_shortener.url.domain.exception.notFound;
+package com.app.url_shortener.shared.exception.notfound;
 
-import com.app.url_shortener.url.domain.exception.AppBusinessException;
-import com.app.url_shortener.url.domain.exception.ErrorCode;
+import com.app.url_shortener.shared.exception.AppBusinessException;
+import com.app.url_shortener.shared.exception.ErrorCode;
 
 public abstract class NotFoundException extends AppBusinessException {
 

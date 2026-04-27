@@ -10,7 +10,7 @@ import static org.mockito.Mockito.doThrow;
 
 import com.app.url_shortener.IntegrationTest.config.AbstractIntegrationTest;
 import com.app.url_shortener.url.application.port.output.UrlRepositoryPort;
-import com.app.url_shortener.url.domain.exception.conflict.ShortCodeCollisionException;
+import com.app.url_shortener.url.domain.exception.ShortCodeCollisionException;
 import com.app.url_shortener.url.presentation.dto.request.ShortenUrlRequest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;

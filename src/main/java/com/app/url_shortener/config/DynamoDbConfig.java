@@ -1,4 +1,4 @@
-package com.app.url_shortener.url.infrastructure.config;
+package com.app.url_shortener.config;
 
 import com.app.url_shortener.url.infrastructure.persistence.entity.UrlEntity;
 import java.net.URI;

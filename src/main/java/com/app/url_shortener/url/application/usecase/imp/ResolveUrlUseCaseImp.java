@@ -2,7 +2,7 @@ package com.app.url_shortener.url.application.usecase.imp;
 
 import com.app.url_shortener.url.application.port.output.UrlRepositoryPort;
 import com.app.url_shortener.url.application.usecase.ResolveUrlUseCase;
-import com.app.url_shortener.url.domain.exception.notFound.UrlNotFoundException;
+import com.app.url_shortener.url.domain.exception.UrlNotFoundException;
 import com.app.url_shortener.url.domain.model.Url;
 import org.springframework.stereotype.Service;
 

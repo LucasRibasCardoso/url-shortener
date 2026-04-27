@@ -1,4 +1,4 @@
-package com.app.url_shortener.url.domain.exception;
+package com.app.url_shortener.shared.exception;
 
 import java.util.Objects;
 

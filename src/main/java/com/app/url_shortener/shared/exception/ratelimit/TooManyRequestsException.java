@@ -5,11 +5,8 @@ import com.app.url_shortener.shared.exception.ErrorCode;
 
 public abstract class TooManyRequestsException extends AppBusinessException {
 
-  protected TooManyRequestsException(ErrorCode errorCode) {
+  public TooManyRequestsException(ErrorCode errorCode) {
 	super(errorCode);
   }
 
-  protected TooManyRequestsException(ErrorCode errorCode, Throwable cause) {
-	super(errorCode, cause);
-  }
 }

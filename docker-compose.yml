@@ -4,9 +4,9 @@ services:
     container_name: originalUrl-shortener-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-url_shortener}
-      POSTGRES_USER: ${POSTGRES_USER:-app_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
+      POSTGRES_DB: url_shortener
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
       TZ: UTC
       PGTZ: UTC
     ports:
@@ -17,7 +17,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-app_user} -d ${POSTGRES_DB:-url_shortener}",
+          "pg_isready -U app_user -d url_shortener",
         ]
       interval: 10s
       timeout: 5s

@@ -4,7 +4,7 @@ import com.app.url_shortener.url.application.port.output.UrlRepositoryPort;
 import com.app.url_shortener.url.domain.exception.ShortCodeCollisionException;
 import com.app.url_shortener.url.domain.model.Url;
 import com.app.url_shortener.url.infrastructure.mapper.UrlMapper;
-import com.app.url_shortener.url.infrastructure.persistence.entity.UrlEntity;
+import com.app.url_shortener.url.infrastructure.entity.UrlEntity;
 import java.util.Optional;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -45,7 +45,7 @@ public class UrlRepositoryAdapter implements UrlRepositoryPort {
     try {
       urlTable.putItem(request);
     } catch (ConditionalCheckFailedException exception) {
-      throw new ShortCodeCollisionException(exception);
+      throw new ShortCodeCollisionException();
     }
   }
 

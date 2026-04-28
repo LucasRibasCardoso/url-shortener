@@ -3,6 +3,7 @@ package com.app.url_shortener.IntegrationTest.config;
 import static io.restassured.config.RedirectConfig.redirectConfig;
 import static org.testcontainers.utility.DockerImageName.parse;
 
+import com.app.url_shortener.support.PostgresContainerSupport;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 import java.net.URI;
@@ -50,6 +51,7 @@ public abstract class AbstractIntegrationTest {
 
   @DynamicPropertySource
   static void registerDynamicProperties(DynamicPropertyRegistry registry) {
+    PostgresContainerSupport.registerDatasourceProperties(registry);
     registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
     registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(6379));
 

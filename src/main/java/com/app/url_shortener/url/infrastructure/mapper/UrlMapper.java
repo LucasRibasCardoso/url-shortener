@@ -1,7 +1,7 @@
 package com.app.url_shortener.url.infrastructure.mapper;
 
 import com.app.url_shortener.url.domain.model.Url;
-import com.app.url_shortener.url.infrastructure.persistence.entity.UrlEntity;
+import com.app.url_shortener.url.infrastructure.entity.UrlEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

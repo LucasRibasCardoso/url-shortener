@@ -8,8 +8,5 @@ public class ShortCodeCollisionException extends ConflictException {
     super(UrlErrorCode.URL_SHORT_CODE_COLLISION);
   }
 
-  public ShortCodeCollisionException(Throwable cause) {
-    super(UrlErrorCode.URL_SHORT_CODE_COLLISION, cause);
-  }
 }
 

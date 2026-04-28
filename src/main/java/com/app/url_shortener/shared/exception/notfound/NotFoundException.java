@@ -5,12 +5,9 @@ import com.app.url_shortener.shared.exception.ErrorCode;
 
 public abstract class NotFoundException extends AppBusinessException {
 
-  protected NotFoundException(ErrorCode errorCode) {
+  public NotFoundException(ErrorCode errorCode) {
     super(errorCode);
   }
 
-  protected NotFoundException(ErrorCode errorCode, Throwable cause) {
-    super(errorCode, cause);
-  }
 }
 

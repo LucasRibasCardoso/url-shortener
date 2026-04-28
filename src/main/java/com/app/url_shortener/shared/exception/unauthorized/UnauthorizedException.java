@@ -5,11 +5,8 @@ import com.app.url_shortener.shared.exception.ErrorCode;
 
 public abstract class UnauthorizedException extends AppBusinessException {
 
-  protected UnauthorizedException(ErrorCode errorCode) {
-	super(errorCode);
+  public UnauthorizedException(ErrorCode errorCode) {
+    super(errorCode);
   }
 
-  protected UnauthorizedException(ErrorCode errorCode, Throwable cause) {
-	super(errorCode, cause);
-  }
 }

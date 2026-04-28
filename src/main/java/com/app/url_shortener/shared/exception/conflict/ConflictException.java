@@ -5,12 +5,8 @@ import com.app.url_shortener.shared.exception.ErrorCode;
 
 public abstract class ConflictException extends AppBusinessException {
 
-  protected ConflictException(ErrorCode errorCode) {
+  public ConflictException(ErrorCode errorCode) {
     super(errorCode);
-  }
-
-  protected ConflictException(ErrorCode errorCode, Throwable cause) {
-    super(errorCode, cause);
   }
 
 }

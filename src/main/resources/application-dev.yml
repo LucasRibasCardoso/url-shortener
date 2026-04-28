@@ -1,9 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:url_shortener}
-    username: ${DB_USER:app_user}
-    password: ${DB_PASSWORD:app_password}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/url_shortener
+    username: app_user
+    password: app_password
     hikari:
       pool-name: UrlShortenerHikariPool
       minimum-idle: 2
@@ -15,7 +14,7 @@ spring:
       leak-detection-threshold: 60000
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     open-in-view: false
     properties:
       hibernate:
@@ -27,6 +26,8 @@ spring:
     redis:
       host: localhost
       port: 6379
+  flyway:
+    enabled: true
 
 aws:
   dynamodb:
@@ -46,3 +47,9 @@ app:
     min-length: 7
   id-generator:
     block-size: 1000
+  security:
+    jwt:
+      secret: "X43Q+VZwzlK3qYRVPzn3fnvNJvvWJmOG+yV0r+tj9ok="
+      issuer: ${spring.application.name}
+      access-token-expiration-minutes: 15
+      refresh-token-expiration-days: 7

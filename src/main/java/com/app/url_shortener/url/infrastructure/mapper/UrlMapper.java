@@ -5,27 +5,33 @@ import com.app.url_shortener.url.infrastructure.entity.UrlEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.ObjectFactory;
+import org.mapstruct.ReportingPolicy;
 
 import java.time.LocalDateTime;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UrlMapper {
 
   @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "localDateTimeToString")
   UrlEntity toEntity(Url domain);
 
-  Url toDomain(UrlEntity entity);
-
-  @ObjectFactory
   default Url createUrl(UrlEntity entity) {
     if (entity == null) {
       return null;
     }
-    return Url.create(
-            entity.getShortCode(),
-            entity.getOriginalUrl(),
-            stringToLocalDateTime(entity.getCreatedAt()));
+
+    return toDomain(entity);
+  }
+
+  default Url toDomain(UrlEntity entity) {
+    if (entity == null) {
+      return null;
+    }
+
+    return Url.restore(
+        entity.getShortCode(),
+        entity.getOriginalUrl(),
+        stringToLocalDateTime(entity.getCreatedAt()));
   }
 
   @Named("localDateTimeToString")

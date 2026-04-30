@@ -1,6 +1,7 @@
 CREATE TABLE roles (
     id UUID PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
+    is_default BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

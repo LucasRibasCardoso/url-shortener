@@ -17,6 +17,11 @@ import java.net.URI;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
   private static final String TYPE_FORBIDDEN = "/errors/forbidden";
+  private final ObjectMapper objectMapper;
+
+  public CustomAccessDeniedHandler(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
 
   @Override
   public void handle(
@@ -36,6 +41,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     response.setStatus(HttpStatus.FORBIDDEN.value());
     response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
 
-    new ObjectMapper().writeValue(response.getOutputStream(), problemDetail);
+    objectMapper.writeValue(response.getOutputStream(), problemDetail);
   }
 }

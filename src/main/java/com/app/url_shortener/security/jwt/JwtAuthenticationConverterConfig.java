@@ -11,7 +11,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 
 import java.util.List;
 
-
 @Configuration
 public class JwtAuthenticationConverterConfig {
 
@@ -31,7 +30,8 @@ public class JwtAuthenticationConverterConfig {
               .toList();
     });
 
+    converter.setPrincipalClaimName("sub");
+
     return converter;
   }
 }
-

@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public class UserPrincipal implements UserDetails {
@@ -16,7 +17,7 @@ public class UserPrincipal implements UserDetails {
   private final String passwordHash;
   private final PlanType plan;
   private final UserStatus status;
-  private final Collection<? extends GrantedAuthority> authorities;
+  private final List<GrantedAuthority> authorities;
 
   public UserPrincipal(
           UUID id,
@@ -25,7 +26,7 @@ public class UserPrincipal implements UserDetails {
           String passwordHash,
           PlanType plan,
           UserStatus status,
-          Collection<? extends GrantedAuthority> authorities
+          List<GrantedAuthority> authorities
   ) {
     this.id = id;
     this.name = name;
@@ -33,7 +34,7 @@ public class UserPrincipal implements UserDetails {
     this.passwordHash = passwordHash;
     this.plan = plan;
     this.status = status;
-    this.authorities = authorities;
+    this.authorities = List.copyOf(authorities);
   }
 
   public UUID getId() {

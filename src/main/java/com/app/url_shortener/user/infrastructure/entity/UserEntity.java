@@ -1,9 +1,10 @@
 package com.app.url_shortener.user.infrastructure.entity;
 
-import com.app.url_shortener.auth.infrastructure.entity.RoleEntity;
+import com.app.url_shortener.auth.infrastructure.persistence.entity.RoleEntity;
 import com.app.url_shortener.user.domain.enums.PlanType;
 import com.app.url_shortener.user.domain.enums.UserStatus;
 import com.app.url_shortener.user.domain.exception.InvalidUserPlanException;
+import com.app.url_shortener.user.domain.exception.UserAccountBlockedException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,10 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -76,20 +74,15 @@ public class UserEntity {
           inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<RoleEntity> roles = new HashSet<>();
 
-  public static UserEntity create(String name, String email, String passwordHash, Set<RoleEntity> roles) {
+  public static UserEntity createPendingRegistration(String name, String email, String passwordHash) {
     UserEntity user = new UserEntity();
     user.name = validateRequiredValue(name, "name");
     user.email = validateRequiredValue(email, "email");
     user.passwordHash = validateRequiredValue(passwordHash, "passwordHash");
-    user.plan = defaultPersistedPlan();
+    user.plan = PlanType.FREE;
     user.status = UserStatus.PENDING_EMAIL_VERIFICATION;
     user.emailVerified = false;
     user.tokenVersion = 0;
-
-    if (roles != null) {
-      roles.forEach(user::addRole);
-    }
-
     return user;
   }
 
@@ -123,14 +116,26 @@ public class UserEntity {
     return role;
   }
 
-  private static PlanType defaultPersistedPlan() {
-    return PlanType.FREE;
-  }
-
   private static PlanType validatePersistedPlan(PlanType plan) {
     if (plan == null || plan == PlanType.ANONYMOUS) {
       throw new InvalidUserPlanException();
     }
     return plan;
+  }
+
+  public void verifyEmail(RoleEntity userRole) {
+    Objects.requireNonNull(userRole, "userRole must not be null");
+
+    if (this.emailVerified && this.status == UserStatus.ACTIVE) {
+      return;
+    }
+
+    if (this.status == UserStatus.BLOCKED) {
+      throw new UserAccountBlockedException();
+    }
+
+    this.emailVerified = true;
+    this.status = UserStatus.ACTIVE;
+    this.addRole(userRole);
   }
 }

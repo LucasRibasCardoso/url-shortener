@@ -11,15 +11,15 @@ import org.junit.jupiter.api.Test;
 class UserEntityTest {
 
   @Test
-  void shouldCreatePersistedUserWithFreePlanByDefault() {
-    UserEntity user = UserEntity.create("User Name", "user@example.com", "password-hash", null);
+  void shouldCreatePendingUserPersistedRegistrationWithFreePlanByDefault() {
+    UserEntity user = UserEntity.createPendingRegistration("User Name", "user@example.com", "password-hash");
 
     assertThat(user.getPlan()).isEqualTo(PlanType.FREE);
   }
 
   @Test
   void shouldChangePlanBetweenFreeAndPremium() {
-    UserEntity user = UserEntity.create("User Name", "user@example.com", "password-hash", null);
+    UserEntity user = UserEntity.createPendingRegistration("User Name", "user@example.com", "password-hash");
 
     user.changePlan(PlanType.PREMIUM);
     assertThat(user.getPlan()).isEqualTo(PlanType.PREMIUM);
@@ -30,7 +30,7 @@ class UserEntityTest {
 
   @Test
   void shouldRejectAnonymousPlanForPersistedUser() {
-    UserEntity user = UserEntity.create("User Name", "user@example.com", "password-hash", null);
+    UserEntity user = UserEntity.createPendingRegistration("User Name", "user@example.com", "password-hash");
 
     assertThatThrownBy(() -> user.changePlan(PlanType.ANONYMOUS))
         .isInstanceOf(InvalidUserPlanException.class);
@@ -38,7 +38,7 @@ class UserEntityTest {
 
   @Test
   void shouldRejectNullPlanForPersistedUser() {
-    UserEntity user = UserEntity.create("User Name", "user@example.com", "password-hash", null);
+    UserEntity user = UserEntity.createPendingRegistration("User Name", "user@example.com", "password-hash");
 
     assertThatThrownBy(() -> user.changePlan(null)).isInstanceOf(InvalidUserPlanException.class);
   }

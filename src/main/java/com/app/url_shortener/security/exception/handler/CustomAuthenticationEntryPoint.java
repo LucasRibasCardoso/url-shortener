@@ -16,6 +16,11 @@ import java.net.URI;
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
   private static final String TYPE_UNAUTHORIZED = "/errors/unauthorized";
+  private final ObjectMapper objectMapper;
+
+  public CustomAuthenticationEntryPoint(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
 
   @Override
   public void commence(
@@ -35,6 +40,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
 
-    new ObjectMapper().writeValue(response.getOutputStream(), problemDetail);
+    objectMapper.writeValue(response.getOutputStream(), problemDetail);
   }
 }

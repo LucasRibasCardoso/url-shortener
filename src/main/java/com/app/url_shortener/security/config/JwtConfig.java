@@ -31,13 +31,16 @@ public class JwtConfig {
   }
 
   private SecretKey createSecretKey(String secret) {
-    if (secret == null || secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+    if (secret == null || secret.isBlank()) {
+      throw new IllegalStateException("JWT secret must not be blank.");
+    }
+
+    byte[] secretBytes = secret.trim().getBytes(StandardCharsets.UTF_8);
+
+    if (secretBytes.length < 32) {
       throw new IllegalStateException("JWT secret must have at least 256 bits.");
     }
 
-    return new SecretKeySpec(
-            secret.getBytes(StandardCharsets.UTF_8),
-            "HmacSHA256"
-    );
+    return new SecretKeySpec(secretBytes, "HmacSHA256");
   }
 }

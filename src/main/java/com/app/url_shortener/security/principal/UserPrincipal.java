@@ -1,7 +1,7 @@
 package com.app.url_shortener.security.principal;
 
-import com.app.url_shortener.user.domain.enums.PlanType;
-import com.app.url_shortener.user.domain.enums.UserStatus;
+import com.app.url_shortener.iam.domain.enums.PlanType;
+import com.app.url_shortener.iam.domain.enums.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

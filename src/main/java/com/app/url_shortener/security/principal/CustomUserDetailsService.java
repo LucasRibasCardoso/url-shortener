@@ -1,6 +1,6 @@
 package com.app.url_shortener.security.principal;
 
-import com.app.url_shortener.user.infrastructure.repository.UserRepository;
+import com.app.url_shortener.iam.infrastructure.persistence.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +14,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-  private final UserRepository userRepository;
+  private final UserJpaRepository userRepository;
   private final UserPrincipalFactory userPrincipalFactory;
 
   @Override

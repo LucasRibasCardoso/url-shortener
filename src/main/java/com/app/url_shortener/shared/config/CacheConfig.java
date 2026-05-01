@@ -1,4 +1,4 @@
-package com.app.url_shortener.config;
+package com.app.url_shortener.shared.config;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;

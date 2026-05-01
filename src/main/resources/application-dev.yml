@@ -53,3 +53,7 @@ app:
       issuer: ${spring.application.name}
       access-token-expiration-minutes: 15
       refresh-token-expiration-days: 7
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.error: OFF

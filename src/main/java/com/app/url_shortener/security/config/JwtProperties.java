@@ -1,4 +1,4 @@
-package com.app.url_shortener.security.jwt;
+package com.app.url_shortener.security.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

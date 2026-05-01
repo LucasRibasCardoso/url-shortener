@@ -1,5 +1,6 @@
 package com.app.url_shortener.security.jwt;
 
+import com.app.url_shortener.security.config.JwtProperties;
 import com.app.url_shortener.security.principal.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

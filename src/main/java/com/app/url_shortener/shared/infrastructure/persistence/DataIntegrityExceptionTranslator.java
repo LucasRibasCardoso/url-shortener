@@ -1,0 +1,26 @@
+package com.app.url_shortener.shared.infrastructure.persistence;
+
+import com.app.url_shortener.iam.domain.exception.EmailAlreadyRegisteredException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class DataIntegrityExceptionTranslator {
+
+  private final PostgresConstraintExtractor postgresConstraintExtractor;
+
+  public RuntimeException translate(DataIntegrityViolationException exception) {
+    return postgresConstraintExtractor.extractUniqueConstraintName(exception)
+            .flatMap(DatabaseConstraints::fromValue)
+            .map(this::mapConstraintToException)
+            .orElse(exception);
+  }
+
+  private RuntimeException mapConstraintToException(DatabaseConstraints constraint) {
+    return switch (constraint) {
+      case UK_USERS_EMAIL -> new EmailAlreadyRegisteredException();
+    };
+  }
+}

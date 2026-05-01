@@ -1,6 +1,5 @@
 package com.app.url_shortener.security.config;
 
-import com.app.url_shortener.security.jwt.JwtProperties;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +13,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
-@EnableConfigurationProperties(JwtProperties.class)
+
 @Configuration
 public class JwtConfig {
 

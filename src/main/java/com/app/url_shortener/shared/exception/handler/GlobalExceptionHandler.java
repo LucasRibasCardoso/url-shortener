@@ -105,7 +105,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler({SdkException.class, DataAccessException.class})
   public ProblemDetail handleTechnicalDependencyFailure(Exception exception) {
-    LOGGER.error("Falha técnica ao comunicar com dependência externa.", exception);
+    LOGGER.error("Falha técnica ao comunicar com dependência externa: {}", exception.getMessage());
     ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
         HttpStatus.SERVICE_UNAVAILABLE,
         CommonErrorCode.DEPENDENCY_FAILURE.getMessage());
@@ -121,7 +121,7 @@ public class GlobalExceptionHandler {
     ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
         HttpStatus.INTERNAL_SERVER_ERROR,
         CommonErrorCode.INTERNAL_SERVER_ERROR.getMessage());
-    problemDetail.setTitle("Infraestrutura");
+    problemDetail.setTitle("Erro interno inesperado");
     problemDetail.setType(URI.create(TYPE_INFRASTRUCTURE));
     problemDetail.setProperty("errorCode", CommonErrorCode.INTERNAL_SERVER_ERROR.getCode());
     return problemDetail;

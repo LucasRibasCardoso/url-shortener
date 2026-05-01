@@ -28,7 +28,7 @@ public class UserEntity {
   @Column(nullable = false, length = 120)
   private String name;
 
-  @Column(nullable = false, unique = true, columnDefinition = "citext")
+  @Column(nullable = false, columnDefinition = "citext", length = 120)
   private String email;
 
   @Column(name = "password_hash", nullable = false, columnDefinition = "TEXT")

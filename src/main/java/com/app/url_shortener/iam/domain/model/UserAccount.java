@@ -2,10 +2,11 @@ package com.app.url_shortener.iam.domain.model;
 
 import com.app.url_shortener.iam.domain.enums.PlanType;
 import com.app.url_shortener.iam.domain.enums.UserStatus;
-import com.app.url_shortener.iam.domain.exception.EmailRequiredException;
-import com.app.url_shortener.iam.domain.exception.PasswordHashRequiredException;
-import com.app.url_shortener.iam.domain.exception.UserAccountBlockedException;
-import com.app.url_shortener.iam.domain.exception.UserNameRequiredException;
+import com.app.url_shortener.iam.domain.exception.validation.EmailRequiredException;
+import com.app.url_shortener.iam.domain.exception.validation.PasswordHashRequiredException;
+import com.app.url_shortener.iam.domain.exception.user.UserAccountLockedException;
+import com.app.url_shortener.iam.domain.exception.validation.UserNameRequiredException;
+import com.app.url_shortener.iam.domain.exception.user.UserAccountDisabledException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -108,8 +109,12 @@ public class UserAccount {
       return;
     }
 
-    if (this.status == UserStatus.BLOCKED) {
-      throw new UserAccountBlockedException();
+    if (this.status == UserStatus.LOCKED) {
+      throw new UserAccountLockedException();
+    }
+
+    if (this.status == UserStatus.DISABLED) {
+      throw new UserAccountDisabledException();
     }
 
     this.emailVerified = true;

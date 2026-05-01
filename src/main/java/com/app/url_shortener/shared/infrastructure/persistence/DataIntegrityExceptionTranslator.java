@@ -1,6 +1,6 @@
 package com.app.url_shortener.shared.infrastructure.persistence;
 
-import com.app.url_shortener.iam.domain.exception.EmailAlreadyRegisteredException;
+import com.app.url_shortener.iam.domain.exception.user.EmailAlreadyRegisteredException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;

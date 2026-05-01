@@ -1,6 +1,6 @@
 package com.app.url_shortener.iam.domain.valueobject;
 
-import com.app.url_shortener.iam.domain.exception.EmailRequiredException;
+import com.app.url_shortener.iam.domain.exception.validation.EmailRequiredException;
 
 import java.time.Instant;
 import java.util.Objects;

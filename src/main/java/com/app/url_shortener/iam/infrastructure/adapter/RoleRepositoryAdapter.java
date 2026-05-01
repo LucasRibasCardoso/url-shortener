@@ -1,7 +1,7 @@
 package com.app.url_shortener.iam.infrastructure.adapter;
 
 import com.app.url_shortener.iam.application.port.output.RoleRepositoryPort;
-import com.app.url_shortener.iam.domain.exception.DefaultRoleNotFoundException;
+import com.app.url_shortener.iam.domain.exception.rbac.DefaultRoleNotFoundException;
 import com.app.url_shortener.iam.domain.model.Role;
 import com.app.url_shortener.iam.infrastructure.persistence.mapper.RolePersistenceMapper;
 import com.app.url_shortener.iam.infrastructure.persistence.repository.RoleJpaRepository;

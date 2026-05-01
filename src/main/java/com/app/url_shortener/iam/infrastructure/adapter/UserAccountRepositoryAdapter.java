@@ -24,7 +24,7 @@ public class UserAccountRepositoryAdapter implements UserAccountRepositoryPort {
   @Override
   public UserAccount save(UserAccount userAccount) {
     UserEntity userEntity = userAccountPersistenceMapper.toEntity(userAccount);
-    UserEntity savedEntity = userJpaRepository.save(userEntity);
+    UserEntity savedEntity = userJpaRepository.saveAndFlush(userEntity);
     return userAccountPersistenceMapper.toDomain(savedEntity);
   }
 

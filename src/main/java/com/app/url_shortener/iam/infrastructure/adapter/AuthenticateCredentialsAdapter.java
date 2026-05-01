@@ -2,10 +2,16 @@ package com.app.url_shortener.iam.infrastructure.adapter;
 
 import com.app.url_shortener.iam.application.port.output.AuthenticateCredentialsPort;
 import com.app.url_shortener.iam.application.result.AuthenticatedUserResult;
-import com.app.url_shortener.iam.domain.exception.InvalidCredentialsException;
+import com.app.url_shortener.iam.domain.exception.auth.AccountDisabledException;
+import com.app.url_shortener.iam.domain.exception.auth.AccountLockedException;
+import com.app.url_shortener.iam.domain.exception.auth.AccountNotFoundException;
+import com.app.url_shortener.iam.domain.exception.auth.InvalidCredentialsException;
 import com.app.url_shortener.security.principal.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -35,6 +41,12 @@ public class AuthenticateCredentialsAdapter implements AuthenticateCredentialsPo
 
       return toAuthenticatedUserResult(userPrincipal);
 
+    } catch (AccountExpiredException e) {
+      throw new AccountNotFoundException();
+    } catch (DisabledException e) {
+      throw new AccountDisabledException();
+    } catch (LockedException e) {
+      throw new AccountLockedException();
     } catch (AuthenticationException e) {
       throw new InvalidCredentialsException();
     }

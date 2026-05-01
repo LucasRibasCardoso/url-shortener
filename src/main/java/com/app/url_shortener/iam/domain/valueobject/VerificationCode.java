@@ -1,6 +1,6 @@
 package com.app.url_shortener.iam.domain.valueobject;
 
-import com.app.url_shortener.iam.domain.exception.InvalidVerificationCodeException;
+import com.app.url_shortener.iam.domain.exception.user.InvalidVerificationCodeException;
 import java.security.SecureRandom;
 
 public record VerificationCode(String value) {

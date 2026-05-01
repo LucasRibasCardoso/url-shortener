@@ -1,7 +1,5 @@
-package com.app.url_shortener.shared.exception.handler;
+package com.app.url_shortener.shared.exception;
 
-import com.app.url_shortener.shared.exception.AppBusinessException;
-import com.app.url_shortener.shared.exception.CommonErrorCode;
 import com.app.url_shortener.shared.exception.conflict.ConflictException;
 import com.app.url_shortener.shared.exception.forbidden.ForbiddenException;
 import com.app.url_shortener.shared.exception.notfound.NotFoundException;

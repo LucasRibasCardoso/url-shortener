@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.app.url_shortener.iam.domain.enums.PlanType;
-import com.app.url_shortener.iam.domain.exception.InvalidUserPlanException;
+import com.app.url_shortener.iam.domain.exception.user.InvalidUserPlanException;
 import com.app.url_shortener.iam.infrastructure.persistence.entity.UserEntity;
 import org.junit.jupiter.api.Test;
 

@@ -2,6 +2,7 @@ package com.app.url_shortener.security.principal;
 
 import com.app.url_shortener.iam.domain.enums.PlanType;
 import com.app.url_shortener.iam.domain.enums.UserStatus;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 public class UserPrincipal implements UserDetails {
 
   private final UUID id;
@@ -37,26 +39,6 @@ public class UserPrincipal implements UserDetails {
     this.authorities = List.copyOf(authorities);
   }
 
-  public UUID getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public PlanType getPlan() {
-    return plan;
-  }
-
-  public UserStatus getStatus() {
-    return status;
-  }
-
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return authorities;
@@ -74,12 +56,12 @@ public class UserPrincipal implements UserDetails {
 
   @Override
   public boolean isAccountNonExpired() {
-    return true;
+    return status != UserStatus.DISABLED;
   }
 
   @Override
   public boolean isAccountNonLocked() {
-    return status != UserStatus.BLOCKED;
+    return status != UserStatus.LOCKED;
   }
 
   @Override
@@ -89,6 +71,6 @@ public class UserPrincipal implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return status == UserStatus.ACTIVE;
+    return status != UserStatus.PENDING_EMAIL_VERIFICATION;
   }
 }

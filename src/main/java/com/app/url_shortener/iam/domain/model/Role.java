@@ -1,6 +1,6 @@
 package com.app.url_shortener.iam.domain.model;
 
-import com.app.url_shortener.iam.domain.exception.RoleNameRequiredException;
+import com.app.url_shortener.iam.domain.exception.rbac.RoleNameRequiredException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

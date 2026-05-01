@@ -1,4 +1,4 @@
-package com.app.url_shortener.iam.domain.exception;
+package com.app.url_shortener.iam.domain.exception.auth;
 
 import com.app.url_shortener.shared.exception.notfound.NotFoundException;
 

@@ -1,4 +1,4 @@
-package com.app.url_shortener.iam.domain.exception;
+package com.app.url_shortener.iam.domain.exception.auth;
 
 import com.app.url_shortener.shared.exception.ErrorCode;
 
@@ -11,6 +11,9 @@ public enum AuthErrorCode implements ErrorCode {
   AUTH_ROLE_NAME_REQUIRED("Nome da role é obrigatório."),
   AUTH_PERMISSION_NAME_REQUIRED("Nome da permissão é obrigatório."),
   AUTH_INVALID_CREDENTIALS("Credenciais inválidas."),
+  AUTH_ACCOUNT_PENDING_VERIFICATION("Conta pendente de verificação."),
+  AUTH_ACCOUNT_LOCKED("Conta bloqueada."),
+  AUTH_ACCOUNT_NOT_FOUND("Conta não existe ou foi removida."),
   AUTH_REFRESH_TOKEN_INVALID("Refresh token inválido."),
   AUTH_REFRESH_TOKEN_EXPIRED("Refresh token expirado."),
   AUTH_REFRESH_TOKEN_REVOKED("Refresh token revogado."),

@@ -6,7 +6,7 @@ import com.app.url_shortener.iam.application.port.output.IssueAccessTokenPort;
 import com.app.url_shortener.iam.application.result.AuthenticatedUserResult;
 import com.app.url_shortener.iam.application.result.LoginResult;
 import com.app.url_shortener.iam.application.usecase.LoginUseCase;
-import com.app.url_shortener.iam.domain.exception.InvalidCredentialsException;
+import com.app.url_shortener.iam.domain.exception.auth.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

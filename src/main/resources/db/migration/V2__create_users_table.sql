@@ -11,7 +11,7 @@ CREATE TABLE users (
     created_by UUID NULL,
     updated_by UUID NULL,
     CONSTRAINT chk_users_status CHECK (
-        status IN ('ACTIVE', 'PENDING_EMAIL_VERIFICATION', 'BLOCKED', 'DELETED')
+        status IN ('ACTIVE', 'PENDING_EMAIL_VERIFICATION', 'LOCKED', 'DISABLED')
     ),
     CONSTRAINT uk_users_email UNIQUE (email),
     CONSTRAINT chk_users_token_version_non_negative CHECK (token_version >= 0),

@@ -1,17 +1,17 @@
 package com.app.url_shortener.iam.application.usecase.impl;
 
 import com.app.url_shortener.iam.application.command.VerifyEmailCommand;
-import com.app.url_shortener.iam.application.port.output.UserAccountRepositoryPort;
 import com.app.url_shortener.iam.application.port.output.EmailVerificationTokenPort;
 import com.app.url_shortener.iam.application.port.output.RoleRepositoryPort;
+import com.app.url_shortener.iam.application.port.output.UserAccountRepositoryPort;
 import com.app.url_shortener.iam.application.result.VerifyEmailResult;
 import com.app.url_shortener.iam.application.usecase.VerifyEmailUseCase;
-import com.app.url_shortener.iam.domain.exception.EmailVerificationTokenExpiredException;
-import com.app.url_shortener.iam.domain.exception.InvalidVerificationCodeException;
-import com.app.url_shortener.iam.domain.exception.UserNotFoundException;
-import com.app.url_shortener.iam.domain.valueobject.EmailVerificationToken;
+import com.app.url_shortener.iam.domain.exception.auth.EmailVerificationTokenExpiredException;
+import com.app.url_shortener.iam.domain.exception.user.InvalidVerificationCodeException;
+import com.app.url_shortener.iam.domain.exception.user.UserNotFoundException;
 import com.app.url_shortener.iam.domain.model.Role;
 import com.app.url_shortener.iam.domain.model.UserAccount;
+import com.app.url_shortener.iam.domain.valueobject.EmailVerificationToken;
 import com.app.url_shortener.iam.domain.valueobject.VerificationCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,9 +36,12 @@ public class VerifyEmailUseCaseImpl implements VerifyEmailUseCase {
   @Transactional
   public VerifyEmailResult execute(VerifyEmailCommand command) {
     String email = normalizeEmail(command.email());
+    VerificationCode code = command.code();
 
     EmailVerificationToken token = validateEmailVerificationToken(emailVerificationTokenPort.findByEmail(email));
-    validateEmailVerificationToken(token, command.code());
+    if (!token.matches(code)) {
+      throw new InvalidVerificationCodeException();
+    }
 
     UserAccount userAccount = userAccountRepositoryPort.findByEmail(email).orElseThrow(UserNotFoundException::new);
     Role defaultRole = roleRepositoryPort.findDefaultRole();
@@ -56,12 +59,6 @@ public class VerifyEmailUseCaseImpl implements VerifyEmailUseCase {
         emailVerificationTokenPort.deleteByEmail(email);
       }
     });
-  }
-
-  private void validateEmailVerificationToken(EmailVerificationToken token, VerificationCode code) {
-    if (!token.matches(code)) {
-      throw new InvalidVerificationCodeException();
-    }
   }
 
   private EmailVerificationToken validateEmailVerificationToken(Optional<EmailVerificationToken> token) {

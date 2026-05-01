@@ -1,4 +1,4 @@
-package com.app.url_shortener.iam.infrastructure.cache.redis;
+package com.app.url_shortener.iam.infrastructure.adapter;
 
 import com.app.url_shortener.iam.application.port.output.EmailVerificationTokenPort;
 import com.app.url_shortener.iam.domain.valueobject.EmailVerificationToken;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class RedisEmailVerificationToken implements EmailVerificationTokenPort {
+public class EmailVerificationTokenAdapter implements EmailVerificationTokenPort {
 
   private static final String KEY_PREFIX = "auth:email-verification:";
   private static final String VALUE_SEPARATOR = "|";

@@ -1,4 +1,4 @@
-package com.app.url_shortener.iam.infrastructure.persistence.adapter;
+package com.app.url_shortener.iam.infrastructure.adapter;
 
 import com.app.url_shortener.iam.application.port.output.RoleRepositoryPort;
 import com.app.url_shortener.iam.domain.exception.DefaultRoleNotFoundException;

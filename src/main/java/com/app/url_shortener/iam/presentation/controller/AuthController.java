@@ -1,15 +1,20 @@
 package com.app.url_shortener.iam.presentation.controller;
 
+import com.app.url_shortener.iam.application.command.LoginCommand;
 import com.app.url_shortener.iam.application.command.RegisterUserCommand;
 import com.app.url_shortener.iam.application.command.VerifyEmailCommand;
+import com.app.url_shortener.iam.application.result.LoginResult;
 import com.app.url_shortener.iam.application.result.RegisterUserResult;
 import com.app.url_shortener.iam.application.result.VerifyEmailResult;
+import com.app.url_shortener.iam.application.usecase.LoginUseCase;
 import com.app.url_shortener.iam.application.usecase.RegisterUserUseCase;
 import com.app.url_shortener.iam.application.usecase.VerifyEmailUseCase;
-import com.app.url_shortener.iam.presentation.dto.request.RegisterRequest;
-import com.app.url_shortener.iam.presentation.dto.request.VerifyEmailRequest;
-import com.app.url_shortener.iam.presentation.dto.response.RegisterResponse;
-import com.app.url_shortener.iam.presentation.dto.response.VerifyEmailResponse;
+import com.app.url_shortener.iam.presentation.dto.request.LoginRequestDto;
+import com.app.url_shortener.iam.presentation.dto.request.RegisterRequestDto;
+import com.app.url_shortener.iam.presentation.dto.request.VerifyEmailRequestDto;
+import com.app.url_shortener.iam.presentation.dto.response.LoginResponseDto;
+import com.app.url_shortener.iam.presentation.dto.response.RegisterResponseDto;
+import com.app.url_shortener.iam.presentation.dto.response.VerifyEmailResponseDto;
 import com.app.url_shortener.iam.presentation.mapper.IamWebMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,28 +31,36 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
   private final IamWebMapper iamWebMapper;
+  private final LoginUseCase loginUseCase;
   private final VerifyEmailUseCase verifyEmailUseCase;
   private final RegisterUserUseCase registerUserUseCase;
 
   @PostMapping("/register")
-  public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
+  public ResponseEntity<RegisterResponseDto> register(@Valid @RequestBody RegisterRequestDto request) {
     RegisterUserCommand command = iamWebMapper.toCommand(request);
     RegisterUserResult result = registerUserUseCase.execute(command);
-    RegisterResponse response = iamWebMapper.toResponse(result);
+    RegisterResponseDto response = iamWebMapper.toResponse(result);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @PostMapping("/verify-email")
-  public ResponseEntity<VerifyEmailResponse> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+  public ResponseEntity<VerifyEmailResponseDto> verifyEmail(@Valid @RequestBody VerifyEmailRequestDto request) {
     VerifyEmailCommand command = iamWebMapper.toCommand(request);
     VerifyEmailResult result = verifyEmailUseCase.execute(command);
-    VerifyEmailResponse response = iamWebMapper.toResponse(result);
+    VerifyEmailResponseDto response = iamWebMapper.toResponse(result);
 
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  // TODO: Endpoint para Login
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
+    LoginCommand command = iamWebMapper.toCommand(request);
+    LoginResult result = loginUseCase.execute(command);
+    LoginResponseDto response = iamWebMapper.toResponse(result);
+
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
   // TODO: Endpoint para Refresh Token
   // TODO: Endpoint para Logout
 }

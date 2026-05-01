@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,6 +29,11 @@ public class SecurityConfig {
   }
 
   @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+    return authenticationConfiguration.getAuthenticationManager();
+  }
+
+  @Bean
   SecurityFilterChain securityFilterChain(
           HttpSecurity http,
           CustomAccessDeniedHandler accessDeniedHandler,
@@ -43,7 +50,11 @@ public class SecurityConfig {
                     .accessDeniedHandler(accessDeniedHandler)
             )
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/v1/auth/register", "/api/v1/auth/verify-email").permitAll()
+                    .requestMatchers(
+                            "/api/v1/auth/register",
+                            "/api/v1/auth/verify-email",
+                            "/api/v1/auth/login"
+                    ).permitAll()
                     .requestMatchers("/r/**").permitAll()
                     .requestMatchers(
                             "/docs.html",
@@ -54,8 +65,7 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
-                    .jwt(jwt -> jwt
-                            .jwtAuthenticationConverter(jwtAuthenticationConverter))
+                    .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
             ).build();
   }
 }

@@ -1,6 +1,5 @@
 package com.app.url_shortener.shared.infrastructure.idempotency.impl;
 
-import com.app.url_shortener.shared.exception.CommonErrorCode;
 import com.app.url_shortener.shared.exception.internalservererror.IdempotencyCacheException;
 import com.app.url_shortener.shared.infrastructure.idempotency.CachedResponse;
 import com.app.url_shortener.shared.infrastructure.idempotency.IdempotencyStore;

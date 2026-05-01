@@ -4,34 +4,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-
-import java.util.List;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 @Configuration
 public class JwtAuthenticationConverterConfig {
 
   @Bean
   public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
-    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+    JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
-    converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-      List<String> authorities = jwt.getClaimAsStringList("authorities");
+    grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
+    grantedAuthoritiesConverter.setAuthorityPrefix("");
 
-      if (authorities == null) {
-        return List.of();
-      }
+    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
 
-      return authorities.stream()
-              .map(authority -> (GrantedAuthority) new SimpleGrantedAuthority(authority))
-              .toList();
-    });
-
-    converter.setPrincipalClaimName("sub");
-
-    return converter;
+    return jwtAuthenticationConverter;
   }
 }

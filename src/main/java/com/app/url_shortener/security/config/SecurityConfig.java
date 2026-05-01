@@ -45,10 +45,6 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .exceptionHandling(exception -> exception
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                    .accessDeniedHandler(accessDeniedHandler)
-            )
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(
                             "/api/v1/auth/register",
@@ -65,6 +61,8 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .accessDeniedHandler(accessDeniedHandler)
                     .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
             ).build();
   }

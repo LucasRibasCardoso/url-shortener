@@ -4,7 +4,7 @@ import com.app.url_shortener.shared.exception.internalservererror.IdempotencyCac
 import com.app.url_shortener.shared.infrastructure.idempotency.CachedResponse;
 import com.app.url_shortener.shared.infrastructure.idempotency.IdempotencyStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -38,7 +38,7 @@ public class RedisIdempotencyStore implements IdempotencyStore {
 
     try {
       return objectMapper.readValue(state, CachedResponse.class);
-    } catch (JsonProcessingException e) {
+    } catch (Exception e) {
       throw new IdempotencyCacheException("Falha ao desserializar o cache de idempotency-key");
     }
 
@@ -49,7 +49,7 @@ public class RedisIdempotencyStore implements IdempotencyStore {
     try {
       String responseJson = objectMapper.writeValueAsString(cachedResponse);
       redisTemplate.opsForValue().set(KEY_PREFIX + key, responseJson, Duration.ofHours(timeToLiveInHours));
-    } catch (JsonProcessingException e) {
+    } catch (Exception e) {
       throw new IdempotencyCacheException("Erro ao serializar o cache de idempotência para o Redis");
     }
   }

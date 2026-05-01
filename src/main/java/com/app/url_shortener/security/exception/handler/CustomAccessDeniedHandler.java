@@ -1,27 +1,26 @@
 package com.app.url_shortener.security.exception.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.app.url_shortener.shared.exception.CommonErrorCode;
+import com.app.url_shortener.shared.presentation.error.ProblemDetailFactory;
+import com.app.url_shortener.shared.presentation.error.ProblemDetailResponseWriter;
+import com.app.url_shortener.shared.presentation.error.ProblemType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URI;
 
 @Component
+@RequiredArgsConstructor
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-  private static final String TYPE_FORBIDDEN = "/errors/forbidden";
-  private final ObjectMapper objectMapper;
-
-  public CustomAccessDeniedHandler(ObjectMapper objectMapper) {
-    this.objectMapper = objectMapper;
-  }
+  private final ProblemDetailFactory problemDetailFactory;
+  private final ProblemDetailResponseWriter responseWriter;
 
   @Override
   public void handle(
@@ -29,18 +28,15 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
           HttpServletResponse response,
           AccessDeniedException accessDeniedException
   ) throws IOException {
-    ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+    ProblemDetail problemDetail = problemDetailFactory.createWithInstance(
             HttpStatus.FORBIDDEN,
-            "Você não possui permissão para acessar este recurso."
+            "Acesso negado",
+            CommonErrorCode.AUTH_ACCESS_DENIED.getMessage(),
+            ProblemType.FORBIDDEN,
+            CommonErrorCode.AUTH_ACCESS_DENIED,
+            request.getRequestURI()
     );
 
-    problemDetail.setTitle("Acesso negado");
-    problemDetail.setType(URI.create(TYPE_FORBIDDEN));
-    problemDetail.setProperty("errorCode", "AUTH_ACCESS_DENIED");
-
-    response.setStatus(HttpStatus.FORBIDDEN.value());
-    response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-
-    objectMapper.writeValue(response.getOutputStream(), problemDetail);
+    responseWriter.write(response, problemDetail);
   }
 }

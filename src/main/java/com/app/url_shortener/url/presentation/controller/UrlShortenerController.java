@@ -10,6 +10,7 @@ import java.net.URI;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +28,7 @@ public class UrlShortenerController implements UrlShortenerControllerDocs {
   }
 
   @PostMapping
+  @PreAuthorize("hasAuthority('url:create')")
   public ResponseEntity<@NonNull UrlResponse> shortenUrl(@Valid @RequestBody ShortenUrlRequest request) {
     Url createdUrl = shortenUrlUseCase.execute(request.originalUrl());
     String fullUrl = concatFullUrl(createdUrl);
@@ -39,7 +41,7 @@ public class UrlShortenerController implements UrlShortenerControllerDocs {
 
   private String concatFullUrl(Url url) {
     return baseUrl.endsWith("/")
-        ? baseUrl + url.getShortCode()
-        : baseUrl + "/" + url.getShortCode();
+        ? baseUrl + "r/" + url.getShortCode()
+        : baseUrl + "/r/" + url.getShortCode();
   }
 }

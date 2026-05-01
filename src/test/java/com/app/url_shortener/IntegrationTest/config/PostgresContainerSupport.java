@@ -1,4 +1,4 @@
-package com.app.url_shortener.support;
+package com.app.url_shortener.IntegrationTest.config;
 
 import static org.testcontainers.utility.DockerImageName.parse;
 

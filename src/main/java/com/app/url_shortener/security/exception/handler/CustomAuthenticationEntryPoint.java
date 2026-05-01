@@ -1,26 +1,26 @@
 package com.app.url_shortener.security.exception.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.app.url_shortener.shared.exception.CommonErrorCode;
+import com.app.url_shortener.shared.presentation.error.ProblemDetailFactory;
+import com.app.url_shortener.shared.presentation.error.ProblemDetailResponseWriter;
+import com.app.url_shortener.shared.presentation.error.ProblemType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URI;
 
 @Component
+@RequiredArgsConstructor
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-  private static final String TYPE_UNAUTHORIZED = "/errors/unauthorized";
-  private final ObjectMapper objectMapper;
 
-  public CustomAuthenticationEntryPoint(ObjectMapper objectMapper) {
-    this.objectMapper = objectMapper;
-  }
+  private final ProblemDetailFactory problemDetailFactory;
+  private final ProblemDetailResponseWriter responseWriter;
 
   @Override
   public void commence(
@@ -28,18 +28,15 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
           HttpServletResponse response,
           AuthenticationException authException
   ) throws IOException {
-    ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+    ProblemDetail problemDetail = problemDetailFactory.createWithInstance(
             HttpStatus.UNAUTHORIZED,
-            "Autenticação necessária ou token inválido."
+            "Não autorizado",
+            CommonErrorCode.AUTH_UNAUTHORIZED.getMessage(),
+            ProblemType.UNAUTHORIZED,
+            CommonErrorCode.AUTH_UNAUTHORIZED,
+            request.getRequestURI()
     );
 
-    problemDetail.setTitle("Não autorizado");
-    problemDetail.setType(URI.create(TYPE_UNAUTHORIZED));
-    problemDetail.setProperty("errorCode", "AUTH_UNAUTHORIZED");
-
-    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-    response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-
-    objectMapper.writeValue(response.getOutputStream(), problemDetail);
+    responseWriter.write(response, problemDetail);
   }
 }

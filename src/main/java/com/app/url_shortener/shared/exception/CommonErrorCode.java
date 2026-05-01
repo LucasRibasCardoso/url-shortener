@@ -5,7 +5,10 @@ public enum CommonErrorCode implements ErrorCode {
   DEPENDENCY_FAILURE("Falha temporária em serviço de infraestrutura."),
   INTERNAL_SERVER_ERROR("Erro interno inesperado."),
   IDEMPOTENCY_HEADER_MISSING("O cabeçalho Idempotency-Key é obrigatório para esta operação."),
-  IDEMPOTENCY_IN_PROCESSING("A requisição já está em processamento. Aguarde.");
+  IDEMPOTENCY_IN_PROCESSING("A requisição já está em processamento. Aguarde."),
+  AUTH_ACCESS_DENIED("Acesso negado para esse recurso"),
+  AUTH_UNAUTHORIZED("Autenticação necessária ou token inválido.")
+  ;
 
   private final String message;
 

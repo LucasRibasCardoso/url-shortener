@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -45,4 +46,8 @@ public class UserAccountRepositoryAdapter implements UserAccountRepositoryPort {
     return userJpaRepository.findByEmailWithRolesAndPermissions(email).map(userAccountPersistenceMapper::toDomain);
   }
 
+  @Override
+  public Optional<UserAccount> findById(UUID id) {
+    return userJpaRepository.findById(id).map(userAccountPersistenceMapper::toDomain);
+  }
 }

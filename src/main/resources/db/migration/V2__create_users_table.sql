@@ -4,7 +4,6 @@ CREATE TABLE users (
     email CITEXT NOT NULL,
     password_hash TEXT NOT NULL,
     status VARCHAR(30) NOT NULL,
-    token_version INTEGER NOT NULL DEFAULT 0,
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -14,7 +13,6 @@ CREATE TABLE users (
         status IN ('ACTIVE', 'PENDING_EMAIL_VERIFICATION', 'LOCKED', 'DISABLED')
     ),
     CONSTRAINT uk_users_email UNIQUE (email),
-    CONSTRAINT chk_users_token_version_non_negative CHECK (token_version >= 0),
     CONSTRAINT fk_users_created_by FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL,
     CONSTRAINT fk_users_updated_by FOREIGN KEY (updated_by) REFERENCES users (id) ON DELETE SET NULL
 );

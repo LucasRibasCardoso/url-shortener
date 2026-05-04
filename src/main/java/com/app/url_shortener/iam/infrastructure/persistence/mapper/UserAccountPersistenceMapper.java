@@ -44,7 +44,6 @@ public abstract class UserAccountPersistenceMapper {
             entity.getStatus(),
             entity.getPlan(),
             entity.isEmailVerified(),
-            entity.getTokenVersion(),
             toDomainRoles(entity.getRoles())
     );
   }
@@ -62,7 +61,6 @@ public abstract class UserAccountPersistenceMapper {
             domain.getStatus(),
             domain.getPlan(),
             domain.isEmailVerified(),
-            domain.getTokenVersion(),
             null,
             null,
             toEntityRoles(domain.getRoles())

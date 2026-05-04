@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.net.InetAddress;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -16,7 +15,6 @@ import java.util.UUID;
 public class RefreshTokenEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(nullable = false, updatable = false)
   private UUID id;
 
@@ -26,15 +24,6 @@ public class RefreshTokenEntity {
 
   @Column(name = "token_hash", nullable = false, unique = true, columnDefinition = "TEXT")
   private String tokenHash;
-
-  @Column(name = "user_agent", columnDefinition = "TEXT")
-  private String userAgent;
-
-  @Column(name = "ip_address", columnDefinition = "inet")
-  private InetAddress ipAddress;
-
-  @Column(name = "device_name", length = 120)
-  private String deviceName;
 
   @CreatedDate
   @Column(name = "created_at", nullable = false, updatable = false)
@@ -57,9 +46,6 @@ public class RefreshTokenEntity {
           UUID id,
           UserEntity user,
           String tokenHash,
-          String userAgent,
-          InetAddress ipAddress,
-          String deviceName,
           Instant createdAt,
           Instant expiresAt,
           Instant revokedAt,
@@ -67,9 +53,6 @@ public class RefreshTokenEntity {
     this.id = id;
     this.user = user;
     this.tokenHash = tokenHash;
-    this.userAgent = userAgent;
-    this.ipAddress = ipAddress;
-    this.deviceName = deviceName;
     this.createdAt = createdAt;
     this.expiresAt = expiresAt;
     this.revokedAt = revokedAt;

@@ -42,9 +42,6 @@ public class UserEntity {
   @Column(nullable = false, length = 30)
   private UserStatus status;
 
-  @Column(name = "token_version", nullable = false)
-  private int tokenVersion;
-
   @Column(name = "email_verified", nullable = false)
   private boolean emailVerified;
 
@@ -83,7 +80,6 @@ public class UserEntity {
           UserStatus status,
           PlanType plan,
           boolean emailVerified,
-          int tokenVersion,
           UserEntity createdBy,
           UserEntity updatedBy,
           Set<RoleEntity> roles) {
@@ -93,7 +89,6 @@ public class UserEntity {
     this.passwordHash = passwordHash;
     this.plan = plan;
     this.status = status;
-    this.tokenVersion = tokenVersion;
     this.emailVerified = emailVerified;
     this.createdBy = createdBy;
     this.updatedBy = updatedBy;

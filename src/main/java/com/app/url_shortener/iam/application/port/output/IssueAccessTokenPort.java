@@ -6,5 +6,5 @@ public interface IssueAccessTokenPort {
 
   String getToken(AuthenticatedUserResult user);
 
-  long getExpiresInMinutes();
+  long getExpiresInSeconds();
 }

@@ -20,7 +20,7 @@ public class IssueAccessTokenAdapter implements IssueAccessTokenPort {
   }
 
   @Override
-  public long getExpiresInMinutes() {
+  public long getExpiresInSeconds() {
     return jwtTokenService.getExpiresInSeconds();
   }
 }

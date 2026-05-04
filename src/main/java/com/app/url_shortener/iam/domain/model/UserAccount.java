@@ -2,11 +2,11 @@ package com.app.url_shortener.iam.domain.model;
 
 import com.app.url_shortener.iam.domain.enums.PlanType;
 import com.app.url_shortener.iam.domain.enums.UserStatus;
+import com.app.url_shortener.iam.domain.exception.user.UserAccountDisabledException;
+import com.app.url_shortener.iam.domain.exception.user.UserAccountLockedException;
 import com.app.url_shortener.iam.domain.exception.validation.EmailRequiredException;
 import com.app.url_shortener.iam.domain.exception.validation.PasswordHashRequiredException;
-import com.app.url_shortener.iam.domain.exception.user.UserAccountLockedException;
 import com.app.url_shortener.iam.domain.exception.validation.UserNameRequiredException;
-import com.app.url_shortener.iam.domain.exception.user.UserAccountDisabledException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -26,7 +26,6 @@ public class UserAccount {
   private UserStatus status;
   private final PlanType plan;
   private boolean emailVerified;
-  private int tokenVersion;
   private final Set<Role> roles;
 
   private UserAccount(
@@ -37,7 +36,6 @@ public class UserAccount {
           UserStatus status,
           PlanType planType,
           boolean emailVerified,
-          int tokenVersion,
           Set<Role> roles) {
     this.id = Objects.requireNonNull(id, "id is required");
     this.name = validateName(name);
@@ -46,7 +44,6 @@ public class UserAccount {
     this.status = status;
     this.plan = planType;
     this.emailVerified = emailVerified;
-    this.tokenVersion = tokenVersion;
     this.roles = roles == null ? new HashSet<>() : new HashSet<>(roles);
   }
 
@@ -58,7 +55,7 @@ public class UserAccount {
     UUID id = UUID.randomUUID();
     UserStatus status = UserStatus.PENDING_EMAIL_VERIFICATION;
     PlanType planType = PlanType.FREE;
-    return new UserAccount(id, name, email, passwordHash, status, planType, false, 0, null);
+    return new UserAccount(id, name, email, passwordHash, status, planType, false, null);
   }
 
   public static UserAccount restore(
@@ -69,9 +66,8 @@ public class UserAccount {
           UserStatus status,
           PlanType planType,
           boolean emailVerified,
-          int tokenVersion,
           Set<Role> roles) {
-    return new UserAccount(id, name, email, passwordHash, status, planType, emailVerified, tokenVersion, roles);
+    return new UserAccount(id, name, email, passwordHash, status, planType, emailVerified, roles);
   }
 
   public Set<Role> getRoles() {
@@ -122,7 +118,4 @@ public class UserAccount {
     this.roles.add(defaultRole);
   }
 
-  public void revokeAllSessions() {
-    this.tokenVersion++;
-  }
 }

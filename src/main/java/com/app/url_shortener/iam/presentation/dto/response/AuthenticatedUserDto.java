@@ -7,7 +7,7 @@ public record AuthenticatedUserDto(
         UUID id,
         String name,
         String email,
-        List<String> roles,
-        String plan
+        String plan,
+        List<String> roles
 ) {
 }

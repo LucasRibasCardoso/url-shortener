@@ -12,3 +12,4 @@ app:
     protected-uris:
       - /api/v1/auth/register
       - /api/v1/auth/verify-email
+      - /api/v1/auth/refresh

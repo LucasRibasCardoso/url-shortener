@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -35,7 +34,7 @@ public class VerifyEmailUseCaseImpl implements VerifyEmailUseCase {
   @Override
   @Transactional
   public VerifyEmailResult execute(VerifyEmailCommand command) {
-    String email = normalizeEmail(command.email());
+    String email = command.email();
     VerificationCode code = command.code();
 
     EmailVerificationToken token = validateEmailVerificationToken(emailVerificationTokenPort.findByEmail(email));
@@ -68,9 +67,4 @@ public class VerifyEmailUseCaseImpl implements VerifyEmailUseCase {
 
     return token.get();
   }
-
-  private String normalizeEmail(String email) {
-    return email.trim().toLowerCase(Locale.ROOT);
-  }
-
 }

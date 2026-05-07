@@ -1,6 +1,5 @@
 package com.app.url_shortener.iam.domain.model;
 
-import com.app.url_shortener.iam.domain.exception.rbac.PermissionNameRequiredException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -20,7 +19,7 @@ public class Permission {
 
   private Permission(UUID id, String name, String description) {
     this.id = Objects.requireNonNull(id, "id is required");
-    this.name = validateName(name);
+    this.name = Objects.requireNonNull(name, "name is required");
     this.description = normalizeDescription(description);
   }
 
@@ -31,14 +30,6 @@ public class Permission {
 
   public static Permission restore(UUID id, String name, String description) {
     return new Permission(id, name, description);
-  }
-
-  private static String validateName(String name) {
-    if (name == null || name.isBlank()) {
-      throw new PermissionNameRequiredException();
-    }
-
-    return name.trim();
   }
 
   private static String normalizeDescription(String description) {

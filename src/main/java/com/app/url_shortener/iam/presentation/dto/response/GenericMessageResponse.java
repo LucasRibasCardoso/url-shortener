@@ -1,4 +1,4 @@
 package com.app.url_shortener.iam.presentation.dto.response;
 
-public record VerifyEmailResponseDto(String message) {
+public record GenericMessageResponse(String message) {
 }

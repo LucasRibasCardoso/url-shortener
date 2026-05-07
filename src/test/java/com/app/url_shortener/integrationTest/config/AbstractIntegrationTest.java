@@ -1,4 +1,4 @@
-package com.app.url_shortener.IntegrationTest.config;
+package com.app.url_shortener.integrationTest.config;
 
 import static io.restassured.config.RedirectConfig.redirectConfig;
 import static org.testcontainers.utility.DockerImageName.parse;

@@ -1,6 +1,5 @@
 package com.app.url_shortener.iam.domain.model;
 
-import com.app.url_shortener.iam.domain.exception.rbac.RoleNameRequiredException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -20,7 +19,7 @@ public class Role {
 
   private Role(UUID id, String name, boolean isDefault, Set<Permission> permissions) {
     this.id = Objects.requireNonNull(id, "id is required");
-    this.name = validateName(name);
+    this.name = Objects.requireNonNull(name, "name is required").trim();
     this.isDefault = isDefault;
     this.permissions = permissions == null ? new HashSet<>() : permissions;
   }
@@ -33,14 +32,6 @@ public class Role {
 
   public static Role restore(UUID id, String name, boolean isDefault, Set<Permission> permissions) {
     return new Role(id, name, isDefault, permissions);
-  }
-
-  private static String validateName(String name) {
-    if (name == null || name.isBlank()) {
-      throw new RoleNameRequiredException();
-    }
-
-    return name.trim();
   }
 
   public Set<Permission> getPermissions() {

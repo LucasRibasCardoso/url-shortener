@@ -1,6 +1,6 @@
 package com.app.url_shortener;
 
-import com.app.url_shortener.IntegrationTest.config.PostgresContainerSupport;
+import com.app.url_shortener.integrationTest.config.PostgresContainerSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;

@@ -8,7 +8,7 @@ import com.app.url_shortener.iam.application.port.output.UserAccountRepositoryPo
 import com.app.url_shortener.iam.application.result.AuthenticatedUserResult;
 import com.app.url_shortener.iam.application.result.RefreshTokenResult;
 import com.app.url_shortener.iam.application.usecase.RefreshTokenUseCase;
-import com.app.url_shortener.iam.domain.exception.auth.InvalidRefreshTokenException;
+import com.app.url_shortener.iam.domain.exception.auth.RefreshTokenExpiredException;
 import com.app.url_shortener.iam.domain.exception.auth.TokenCompromisedException;
 import com.app.url_shortener.iam.domain.exception.user.UserNotFoundException;
 import com.app.url_shortener.iam.domain.model.Permission;
@@ -48,7 +48,7 @@ public class RefreshTokenUseCaseImpl implements RefreshTokenUseCase {
   private RefreshToken getAndValidateToken(String rawToken) {
     String incomingHash = tokenGenerator.hashToken(rawToken);
     RefreshToken oldToken = tokenRepository.findByTokenHash(incomingHash)
-            .orElseThrow(InvalidRefreshTokenException::new);
+            .orElseThrow(RefreshTokenExpiredException::new);
 
     if (oldToken.isRevoked()) {
       tokenRepository.revokeAllTokensForUser(oldToken.getUserId());

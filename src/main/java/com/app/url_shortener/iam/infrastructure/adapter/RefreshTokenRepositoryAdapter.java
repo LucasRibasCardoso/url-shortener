@@ -8,6 +8,7 @@ import com.app.url_shortener.iam.infrastructure.persistence.repository.RefreshTo
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +32,11 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
 
   @Override
   public void revokeAllTokensForUser(UUID userId) {
-    refreshTokenJpaRepository.revokeAllActiveTokensByUserId(userId);
+    refreshTokenJpaRepository.revokeAllActiveTokensByUserId(userId, Instant.now());
+  }
+
+  @Override
+  public void revokeActiveTokenByHash(String tokenHash) {
+    refreshTokenJpaRepository.revokeActiveTokenByHash(tokenHash, Instant.now());
   }
 }

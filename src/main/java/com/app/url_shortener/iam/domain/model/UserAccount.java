@@ -23,10 +23,11 @@ public class UserAccount {
   private final String name;
   private final String email;
   private final String passwordHash;
-  private UserStatus status;
-  private final PlanType plan;
-  private boolean emailVerified;
   private final Set<Role> roles;
+  private final PlanType plan;
+
+  private UserStatus status;
+  private boolean emailVerified;
 
   private UserAccount(
           UUID id,
@@ -38,9 +39,9 @@ public class UserAccount {
           boolean emailVerified,
           Set<Role> roles) {
     this.id = Objects.requireNonNull(id, "id is required");
-    this.name = validateName(name);
-    this.email = validateEmail(email);
-    this.passwordHash = validatePasswordHash(passwordHash);
+    this.name = Objects.requireNonNull(name, "name is required").trim();
+    this.email = Objects.requireNonNull(email, "email is required").trim();
+    this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash is required").trim();
     this.status = status;
     this.plan = planType;
     this.emailVerified = emailVerified;
@@ -70,32 +71,16 @@ public class UserAccount {
     return new UserAccount(id, name, email, passwordHash, status, planType, emailVerified, roles);
   }
 
+  public boolean isActive() {
+    return status == UserStatus.ACTIVE;
+  }
+
+  public boolean isPending() {
+    return status == UserStatus.PENDING_EMAIL_VERIFICATION;
+  }
+
   public Set<Role> getRoles() {
     return Collections.unmodifiableSet(roles);
-  }
-
-  private static String validateName(String name) {
-    if (name == null || name.isBlank()) {
-      throw new UserNameRequiredException();
-    }
-
-    return name.trim();
-  }
-
-  private static String validateEmail(String email) {
-    if (email == null || email.isBlank()) {
-      throw new EmailRequiredException();
-    }
-
-    return email.trim();
-  }
-
-  private static String validatePasswordHash(String passwordHash) {
-    if (passwordHash == null || passwordHash.isBlank()) {
-      throw new PasswordHashRequiredException();
-    }
-
-    return passwordHash.trim();
   }
 
   public void verifyEmail(Role defaultRole) {

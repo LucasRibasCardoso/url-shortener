@@ -38,7 +38,7 @@ public class RefreshToken {
           UUID replacedByTokenId) {
     this.id = Objects.requireNonNull(id, "id is required");
     this.userId = Objects.requireNonNull(userId, "userId is required");
-    this.tokenHash = validateTokenHash(tokenHash);
+    this.tokenHash = Objects.requireNonNull(tokenHash, "tokenHash is required");
     this.createdAt = Objects.requireNonNull(createdAt, "createdAt is required");
     this.expiresAt = Objects.requireNonNull(expiresAt, "expiresAt is required");
     this.revokedAt = revokedAt;
@@ -46,15 +46,8 @@ public class RefreshToken {
   }
 
   public static RefreshToken create(UUID userId, String tokenHash) {
-    return new RefreshToken(
-            UUID.randomUUID(),
-            userId,
-            tokenHash,
-            Instant.now(),
-            Instant.now().plus(7, ChronoUnit.DAYS),
-            null,
-            null
-    );
+    Instant now = Instant.now();
+    return new RefreshToken(UUID.randomUUID(), userId, tokenHash, now, now.plus(7, ChronoUnit.DAYS), null, null);
   }
 
   public static RefreshToken restore(
@@ -68,29 +61,7 @@ public class RefreshToken {
     return new RefreshToken(id, userId, tokenHash, createdAt, expiresAt, revokedAt, replacedByTokenId);
   }
 
-  private static String validateTokenHash(String tokenHash) {
-    if (tokenHash == null || tokenHash.isBlank()) {
-      throw new IllegalArgumentException("tokenHash is required");
-    }
-    return tokenHash.trim();
-  }
-
   // --- Comportamentos de Negócio (Rich Domain) ---
-
-  public boolean isExpired(Instant now) {
-    return now.isAfter(this.expiresAt);
-  }
-
-  public boolean isRevoked() {
-    return this.revokedAt != null;
-  }
-
-  public void revoke() {
-    if (!isRevoked()) {
-      this.revokedAt = Instant.now();
-    }
-  }
-
   public RefreshToken rotate(String newTokenHash) {
     if (this.isRevoked()) {
       throw new TokenCompromisedException();
@@ -105,5 +76,19 @@ public class RefreshToken {
     this.replacedByTokenId = nextToken.getId();
 
     return nextToken;
+  }
+
+  public boolean isExpired(Instant now) {
+    return now.isAfter(this.expiresAt);
+  }
+
+  public boolean isRevoked() {
+    return this.revokedAt != null;
+  }
+
+  private void revoke() {
+    if (!isRevoked()) {
+      this.revokedAt = Instant.now();
+    }
   }
 }

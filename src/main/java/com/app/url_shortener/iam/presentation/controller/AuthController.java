@@ -1,25 +1,16 @@
 package com.app.url_shortener.iam.presentation.controller;
 
-import com.app.url_shortener.iam.application.command.LoginCommand;
-import com.app.url_shortener.iam.application.command.RefreshTokenCommand;
-import com.app.url_shortener.iam.application.command.RegisterUserCommand;
-import com.app.url_shortener.iam.application.command.VerifyEmailCommand;
-import com.app.url_shortener.iam.application.result.LoginResult;
-import com.app.url_shortener.iam.application.result.RefreshTokenResult;
-import com.app.url_shortener.iam.application.result.RegisterUserResult;
-import com.app.url_shortener.iam.application.result.VerifyEmailResult;
-import com.app.url_shortener.iam.application.usecase.LoginUseCase;
-import com.app.url_shortener.iam.application.usecase.RefreshTokenUseCase;
-import com.app.url_shortener.iam.application.usecase.RegisterUserUseCase;
-import com.app.url_shortener.iam.application.usecase.VerifyEmailUseCase;
+import com.app.url_shortener.iam.application.command.*;
+import com.app.url_shortener.iam.application.result.*;
+import com.app.url_shortener.iam.application.usecase.*;
 import com.app.url_shortener.iam.domain.exception.auth.InvalidRefreshTokenException;
 import com.app.url_shortener.iam.presentation.dto.request.LoginRequestDto;
 import com.app.url_shortener.iam.presentation.dto.request.RegisterRequestDto;
+import com.app.url_shortener.iam.presentation.dto.request.ResendVerificationRequest;
 import com.app.url_shortener.iam.presentation.dto.request.VerifyEmailRequestDto;
+import com.app.url_shortener.iam.presentation.dto.response.GenericMessageResponse;
 import com.app.url_shortener.iam.presentation.dto.response.LoginResponseDto;
 import com.app.url_shortener.iam.presentation.dto.response.RefreshTokenResponseDto;
-import com.app.url_shortener.iam.presentation.dto.response.RegisterResponseDto;
-import com.app.url_shortener.iam.presentation.dto.response.VerifyEmailResponseDto;
 import com.app.url_shortener.iam.presentation.mapper.IamWebMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,24 +30,26 @@ public class AuthController {
   public static final Duration DEFAULT_MAX_AGE = Duration.ofDays(7);
   private final IamWebMapper iamWebMapper;
   private final LoginUseCase loginUseCase;
+  private final LogoutUseCase logoutUseCase;
   private final VerifyEmailUseCase verifyEmailUseCase;
   private final RegisterUserUseCase registerUserUseCase;
   private final RefreshTokenUseCase refreshTokenUseCase;
+  private final ResendVerificationUseCase resendVerificationUseCase;
 
   @PostMapping("/register")
-  public ResponseEntity<RegisterResponseDto> register(@Valid @RequestBody RegisterRequestDto request) {
+  public ResponseEntity<GenericMessageResponse> register(@Valid @RequestBody RegisterRequestDto request) {
     RegisterUserCommand command = iamWebMapper.toCommand(request);
     RegisterUserResult result = registerUserUseCase.execute(command);
-    RegisterResponseDto response = iamWebMapper.toResponse(result);
+    GenericMessageResponse response = iamWebMapper.toResponse(result);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @PostMapping("/verify-email")
-  public ResponseEntity<VerifyEmailResponseDto> verifyEmail(@Valid @RequestBody VerifyEmailRequestDto request) {
+  public ResponseEntity<GenericMessageResponse> verifyEmail(@Valid @RequestBody VerifyEmailRequestDto request) {
     VerifyEmailCommand command = iamWebMapper.toCommand(request);
     VerifyEmailResult result = verifyEmailUseCase.execute(command);
-    VerifyEmailResponseDto response = iamWebMapper.toResponse(result);
+    GenericMessageResponse response = iamWebMapper.toResponse(result);
 
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
@@ -67,7 +60,7 @@ public class AuthController {
     LoginResult result = loginUseCase.execute(command);
     LoginResponseDto response = iamWebMapper.toResponse(result);
 
-    ResponseCookie cookie = buildRefreshTokenCookie(result.refreshToken(), "/api/v1/auth", DEFAULT_MAX_AGE);
+    ResponseCookie cookie = buildRefreshTokenCookie(result.refreshToken());
     return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
   }
 
@@ -78,17 +71,43 @@ public class AuthController {
     RefreshTokenResult result = refreshTokenUseCase.execute(new RefreshTokenCommand(refreshToken));
     RefreshTokenResponseDto response = iamWebMapper.toResponse(result);
 
-    ResponseCookie cookie = buildRefreshTokenCookie(result.newRefreshToken(), "/api/v1/auth", DEFAULT_MAX_AGE);
+    ResponseCookie cookie = buildRefreshTokenCookie(result.newRefreshToken());
     return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
   }
 
-  private ResponseCookie buildRefreshTokenCookie(String value, String path, Duration maxAge) {
-    return ResponseCookie.from("refreshToken", value)
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout(@CookieValue(required = false) String refreshToken) {
+    logoutUseCase.execute(new LogoutCommand(refreshToken));
+    ResponseCookie expiredCookie = buildExpireRefreshTokenCookie();
+    return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, expiredCookie.toString()).build();
+  }
+
+  @PostMapping("/resend-verification")
+  public ResponseEntity<GenericMessageResponse> resend(@Valid @RequestBody ResendVerificationRequest request) {
+    ResendVerificationCommand command = iamWebMapper.toCommand(request);
+    ResendVerificationResult result = resendVerificationUseCase.execute(command);
+    GenericMessageResponse response = iamWebMapper.toResponse(result);
+
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  private ResponseCookie buildRefreshTokenCookie(String refreshToken) {
+    return ResponseCookie.from("refreshToken", refreshToken)
             .httpOnly(true)
             .secure(true)
             .sameSite("Strict")
-            .path(path)
-            .maxAge(maxAge)
+            .path("/api/v1/auth")
+            .maxAge(DEFAULT_MAX_AGE)
+            .build();
+  }
+
+  private ResponseCookie buildExpireRefreshTokenCookie() {
+    return ResponseCookie.from("refreshToken", "")
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("Strict")
+            .path("/api/v1/auth")
+            .maxAge(Duration.ZERO)
             .build();
   }
 }

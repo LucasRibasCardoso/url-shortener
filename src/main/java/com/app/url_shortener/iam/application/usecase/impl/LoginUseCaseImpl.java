@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Locale;
-
 @Service
 @RequiredArgsConstructor
 public class LoginUseCaseImpl implements LoginUseCase {
@@ -30,7 +28,10 @@ public class LoginUseCaseImpl implements LoginUseCase {
   @Override
   @Transactional
   public LoginResult execute(LoginCommand command) {
-    String email = normalizeEmail(command.email());
+    String email = command.email();
+    if (email == null || email.isBlank()) {
+      throw new InvalidCredentialsException();
+    }
 
     AuthenticatedUserResult authenticatedUser = authenticateCredentialsPort.authenticate(email, command.password());
 
@@ -44,13 +45,5 @@ public class LoginUseCaseImpl implements LoginUseCase {
     long expiresAt = issueAccessTokenPort.getExpiresInSeconds();
 
     return new LoginResult(rawRefreshToken, accessToken, TOKEN_TYPE, expiresAt, authenticatedUser);
-  }
-
-  private String normalizeEmail(String email) {
-    if (email == null || email.isBlank()) {
-      throw new InvalidCredentialsException();
-    }
-
-    return email.trim().toLowerCase(Locale.ROOT);
   }
 }

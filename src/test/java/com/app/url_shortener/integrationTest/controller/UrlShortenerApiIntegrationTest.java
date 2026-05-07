@@ -1,4 +1,4 @@
-package com.app.url_shortener.IntegrationTest.controller;
+package com.app.url_shortener.integrationTest.controller;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
-import com.app.url_shortener.IntegrationTest.config.AbstractIntegrationTest;
+import com.app.url_shortener.integrationTest.config.AbstractIntegrationTest;
 import com.app.url_shortener.url.application.port.output.UrlRepositoryPort;
 import com.app.url_shortener.url.domain.exception.ShortCodeCollisionException;
 import com.app.url_shortener.url.presentation.dto.request.ShortenUrlRequest;

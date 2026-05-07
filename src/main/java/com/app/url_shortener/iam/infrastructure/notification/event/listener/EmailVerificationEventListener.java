@@ -1,6 +1,6 @@
 package com.app.url_shortener.iam.infrastructure.notification.event.listener;
 
-import com.app.url_shortener.iam.domain.event.EmailVerificationRequestedEvent;
+import com.app.url_shortener.iam.domain.event.EmailVerificationEvent;
 import com.app.url_shortener.iam.infrastructure.notification.strategy.EmailSenderStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class EmailVerificationEventListener {
   private final EmailSenderStrategy emailSenderStrategy;
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-  public void onEmailVerificationRequested(EmailVerificationRequestedEvent event) {
+  public void onEmailVerificationRequested(EmailVerificationEvent event) {
     emailSenderStrategy.sendEmailVerificationCode(event.email(), event.code().value());
   }
 }

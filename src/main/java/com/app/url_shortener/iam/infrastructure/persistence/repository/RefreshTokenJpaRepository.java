@@ -14,11 +14,27 @@ public interface RefreshTokenJpaRepository extends JpaRepository<RefreshTokenEnt
 
   Optional<RefreshTokenEntity> findByTokenHash(String tokenHash);
 
-  @Modifying
-  @Query("UPDATE RefreshTokenEntity r SET r.revokedAt = CURRENT_TIMESTAMP WHERE r.user.id = :userId AND r.revokedAt IS NULL")
-  void revokeAllActiveTokensByUserId(@Param("userId") UUID userId);
+  @Modifying(flushAutomatically = true, clearAutomatically = true)
+  @Query("""
+              update RefreshTokenEntity r
+                 set r.revokedAt = :revokedAt
+               where r.user.id = :userId
+                 and r.revokedAt is null
+          """)
+  void revokeAllActiveTokensByUserId(@Param("userId") UUID userId, @Param("revokedAt") Instant revokedAt);
 
-  @Modifying
+  @Modifying(flushAutomatically = true, clearAutomatically = true)
+  @Query("""
+              update RefreshTokenEntity rt
+                 set rt.revokedAt = :revokedAt
+               where rt.tokenHash = :tokenHash
+                 and rt.revokedAt is null
+          """)
+  void revokeActiveTokenByHash(@Param("tokenHash") String tokenHash, @Param("revokedAt") Instant revokedAt);
+
+
+  @Modifying(flushAutomatically = true, clearAutomatically = true)
   @Query("DELETE FROM RefreshTokenEntity r WHERE r.expiresAt < :cutoffDate")
   int deleteExpiredTokensBefore(@Param("cutoffDate") Instant cutoffDate);
+
 }

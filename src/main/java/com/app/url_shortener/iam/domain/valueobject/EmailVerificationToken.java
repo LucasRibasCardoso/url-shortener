@@ -1,7 +1,5 @@
 package com.app.url_shortener.iam.domain.valueobject;
 
-import com.app.url_shortener.iam.domain.exception.validation.EmailRequiredException;
-
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
@@ -9,10 +7,10 @@ import java.util.UUID;
 public record EmailVerificationToken(UUID userId, String email, VerificationCode code, Instant expiresAt) {
 
   public EmailVerificationToken(UUID userId, String email, VerificationCode code, Instant expiresAt) {
-    this.userId = validateUserId(userId);
-    this.email = validateEmail(email);
-    this.code = validateCode(code);
-    this.expiresAt = validateExpiresAt(expiresAt);
+    this.userId = Objects.requireNonNull(userId, "userId is required");
+    this.email = Objects.requireNonNull(email, "email is required").trim();
+    this.code = Objects.requireNonNull(code, "code is required");
+    this.expiresAt = Objects.requireNonNull(expiresAt, "expiresAt is required");
   }
 
   public static EmailVerificationToken create(
@@ -28,27 +26,6 @@ public record EmailVerificationToken(UUID userId, String email, VerificationCode
   }
 
   public boolean isExpired() {
-    Instant now = Instant.now();
-    return !expiresAt.isAfter(now);
-  }
-
-  private static UUID validateUserId(UUID userId) {
-    return Objects.requireNonNull(userId, "userId is required");
-  }
-
-  private static String validateEmail(String email) {
-    if (email == null || email.isBlank()) {
-      throw new EmailRequiredException();
-    }
-
-    return email.trim();
-  }
-
-  private static VerificationCode validateCode(VerificationCode code) {
-    return Objects.requireNonNull(code, "code is required");
-  }
-
-  private static Instant validateExpiresAt(Instant expiresAt) {
-    return Objects.requireNonNull(expiresAt, "expiresAt is required");
+    return !expiresAt.isAfter(Instant.now());
   }
 }

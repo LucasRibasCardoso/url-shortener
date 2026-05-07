@@ -9,6 +9,8 @@ public class ConsoleEmailSenderStrategy implements EmailSenderStrategy {
 
   @Override
   public void sendEmailVerificationCode(String email, String code) {
+    log.info("========================================================");
     log.info("Código de verificação para {}: {}", email, code);
+    log.info("========================================================");
   }
 }

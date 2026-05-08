@@ -1,15 +1,10 @@
-FROM maven:3.9.9-eclipse-temurin-21 AS builder
+FROM eclipse-temurin:21-jre-alpine AS builder
 
-WORKDIR /app
+WORKDIR /builder
 
-COPY pom.xml .
+COPY target/*.jar app.jar
 
-RUN --mount=type=cache,target=/root/.m2 \mvn dependency:go-offline -B
-
-COPY src ./src
-
-RUN --mount=type=cache,target=/root/.m2 \mvn clean package -DskipTests
-
+RUN java -Djarmode=layertools -jar app.jar extract
 
 FROM eclipse-temurin:21-jre-alpine
 
@@ -22,10 +17,13 @@ ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+ExitOnOutOfMe
 
 WORKDIR /app
 
-COPY --from=builder --chown=appuser:appgroup /app/target/*.jar app.jar
+COPY --from=builder --chown=appuser:appgroup /builder/dependencies/ ./
+COPY --from=builder --chown=appuser:appgroup /builder/spring-boot-loader/ ./
+COPY --from=builder --chown=appuser:appgroup /builder/snapshot-dependencies/ ./
+COPY --from=builder --chown=appuser:appgroup /builder/application/ ./
 
 USER appuser
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]

@@ -132,27 +132,35 @@ For `shared`:
 
 ## Testing Standards
 
-For detailed unit testing rules, always read:
+The project follows a test pyramid using Unit Tests, Slice Tests, and Full Integration Tests. Always read the specific documentation before creating or updating tests:
 
-- `docs/testing/unit-tests-style.md`
+- For Unit Tests: read `docs/testing/unit-tests-style.md`
+- For Slice Tests (Web, JPA, Redis): read `docs/testing/slice-tests-style.md`
 
-before creating or updating unit tests.
-
+**General Testing Rules:**
 - Use JUnit 5, Mockito, and AssertJ.
-- For unit tests, do not load the Spring context and do not use `@SpringBootTest`.
-- Do not use Testcontainers, RestAssured, MockMvc, or WebTestClient for isolated unit tests unless explicitly requested.
-- Use `@ExtendWith(MockitoExtension.class)`, `@Mock`, and `@InjectMocks` where appropriate.
-- Use AssertJ assertions and `assertThatThrownBy` for exception assertions.
+- Use `@DisplayName` in Brazilian Portuguese and test method names in English.
 - Follow the AAA pattern with comments: `// 1. Arrange`, `// 2. Act`, `// 3. Assert`.
 - Test classes and methods should be package-private.
-- Use `@DisplayName` in Brazilian Portuguese and test method names in English.
-- Use `@Nested` to group scenarios and `@Tag("unit")` for unit test classes.
-- Prefer parameterized tests for repeated validation scenarios.
-- Test observable behavior, not private implementation details; do not test private methods directly.
-- When testing use cases, mock output ports and use real domain models and value objects whenever practical.
-- Do not mock simple domain objects, enums, records, commands, or results.
-- Verify port interactions only when they are part of the observable behavior.
-- Integration tests may use Spring Boot, Testcontainers, RestAssured, Redis, LocalStack, and DynamoDB only when testing integrated behavior.
+
+**Unit Tests (`@Tag("unit")`):**
+- Do not load the Spring context. Do not use `@SpringBootTest`.
+- Use `@ExtendWith(MockitoExtension.class)`. Mock all external dependencies.
+
+**Slice Tests:**
+- Follow `docs/testing/slice-tests-style.md`.
+- Use the specific slice tag defined by the guide:
+  - `@Tag("web-slice")` for Web MVC slice tests
+  - `@Tag("jpa-slice")` for JPA slice tests
+  - `@Tag("redis-slice")` for Redis slice tests
+- Use custom base classes (`BaseWebSliceTest`, `BaseDataJpaSliceTest`, `BaseRedisSliceTest`).
+- Do not use `@SpringBootTest` or load the full context.
+- Use `@MockitoBean` to mock out-of-slice dependencies.
+
+**Integration Tests (`@Tag("integration")`):**
+- Use `AbstractIntegrationTest` to load the full Spring Boot context.
+- Use Testcontainers (PostgreSQL, Redis, LocalStack) only when testing end-to-end behavior.
+- Use RestAssured for HTTP assertions.
 
 ## Commands
 

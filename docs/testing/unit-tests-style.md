@@ -16,7 +16,7 @@ Before writing tests:
 3. Inspect existing test classes in the project to preserve naming, package structure, imports, and style.
 4. Follow the testing rules defined in:
    - `AGENTS.md`
-   - `docs/testing/unit-test-style.md`
+   - `docs/testing/unit-tests-style.md`
 
 Implementation rules:
 
@@ -40,6 +40,33 @@ Implementation rules:
 - Use `verifyNoMoreInteractions(...)` where it improves confidence without making the test brittle.
 - Do not test private methods directly.
 - Test observable behavior, outputs, thrown exceptions, and interactions with dependencies only when relevant.
+
+## FIRST Principles
+
+- Fast: unit tests must execute quickly and avoid Spring, I/O, network, databases, Redis, and Testcontainers.
+- Isolated: mock external dependencies and keep the test focused on one class or behavior.
+- Repeatable: tests must not depend on execution order, current time, random values, or shared mutable state.
+- Self-validating: assertions must make the expected result explicit without manual inspection.
+- Timely: add or update unit tests close to the behavior change they protect.
+
+## Test Data and Fixtures
+
+- Prefer private factory methods or test data builders when setup becomes repetitive.
+- Keep builders local to the test class unless reused by multiple classes.
+- Do not create complex builders for simple records, commands, DTOs, enums, or value objects.
+- Test data must keep the scenario clear.
+
+## ArgumentCaptor
+
+- Use `ArgumentCaptor` when the test must verify the state of an object passed to a mocked dependency.
+- Prefer returned values or domain state assertions first.
+- Do not use `ArgumentCaptor` when simple `verify(...)` is enough.
+
+## Mockito Answers
+
+- Prefer `thenReturn` for simple stubbing.
+- Use `thenAnswer` only when the return value depends on the invocation argument.
+- Do not reimplement production behavior inside mocks.
 
 Validation:
 

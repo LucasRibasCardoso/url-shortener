@@ -1,6 +1,7 @@
 package com.app.url_shortener.shared.infrastructure.persistence;
 
 import com.app.url_shortener.iam.domain.exception.user.EmailAlreadyRegisteredException;
+import com.app.url_shortener.shared.exception.conflict.DataIntegrityConflictException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ public class DataIntegrityExceptionTranslator {
     return postgresConstraintExtractor.extractUniqueConstraintName(exception)
             .flatMap(DatabaseConstraints::fromValue)
             .map(this::mapConstraintToException)
-            .orElse(exception);
+            .orElseGet(DataIntegrityConflictException::new);
   }
 
   private RuntimeException mapConstraintToException(DatabaseConstraints constraint) {

@@ -3,17 +3,15 @@ package com.app.url_shortener.url.domain.exception;
 import com.app.url_shortener.shared.exception.ErrorCode;
 
 public enum UrlErrorCode implements ErrorCode {
-  URL_SHORT_CODE_REQUIRED("O codigo curto e obrigatorio."),
-  URL_ORIGINAL_URL_REQUIRED("A URL original e obrigatoria."),
+  URL_SHORT_CODE_REQUIRED("Codigo curto e obrigatorio."),
+  URL_ORIGINAL_URL_REQUIRED("URL original e obrigatoria."),
   URL_SHORT_CODE_COLLISION("O codigo curto informado ja existe."),
-  URL_NOT_FOUND("URL nao encontrada."),
-  URL_REQUEST_VALIDATION_FAILED("Um ou mais campos estao invalidos."),
-  URL_BUSINESS_RULE_VIOLATION("Regra de negocio violada.");
+  URL_NOT_FOUND("URL nao encontrada.");
 
   private final String message;
 
   UrlErrorCode(String message) {
-	this.message = message;
+    this.message = message;
   }
 
   @Override
@@ -23,6 +21,6 @@ public enum UrlErrorCode implements ErrorCode {
 
   @Override
   public String getMessage() {
-	return message;
+    return message;
   }
 }

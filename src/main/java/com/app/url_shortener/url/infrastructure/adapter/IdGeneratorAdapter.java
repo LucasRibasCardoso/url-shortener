@@ -1,13 +1,13 @@
-package com.app.url_shortener.url.application.service.imp;
+package com.app.url_shortener.url.infrastructure.adapter;
 
 import com.app.url_shortener.url.application.port.output.CounterIdRepository;
-import com.app.url_shortener.url.application.service.IdGeneratorService;
+import com.app.url_shortener.url.application.port.output.IdGeneratorPort;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IdGeneratorServiceImp implements IdGeneratorService {
+public class IdGeneratorAdapter implements IdGeneratorPort {
 
   private final CounterIdRepository counterIdRepository;
   private final long blockSize;
@@ -15,7 +15,7 @@ public class IdGeneratorServiceImp implements IdGeneratorService {
   private volatile long baseId = 0;
   private final AtomicLong offset = new AtomicLong(0);
 
-  public IdGeneratorServiceImp(
+  public IdGeneratorAdapter(
       CounterIdRepository counterIdRepository,
       @Value("${app.id-generator.block-size}") long blockSize) {
     this.blockSize = blockSize;

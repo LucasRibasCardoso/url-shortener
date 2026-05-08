@@ -7,6 +7,4 @@ public class OriginalUrlRequiredException extends DomainValidationException {
   public OriginalUrlRequiredException() {
     super(UrlErrorCode.URL_ORIGINAL_URL_REQUIRED);
   }
-
 }
-

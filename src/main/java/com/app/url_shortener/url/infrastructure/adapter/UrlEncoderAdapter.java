@@ -1,4 +1,4 @@
-package com.app.url_shortener.url.infrastructure.adapter.hashids;
+package com.app.url_shortener.url.infrastructure.adapter;
 
 import com.app.url_shortener.url.application.port.output.UrlEncoderPort;
 import jakarta.annotation.PostConstruct;
@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HashidsEncoderAdapter implements UrlEncoderPort {
+public class UrlEncoderAdapter implements UrlEncoderPort {
 
   private static final String BASE62_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -16,7 +16,7 @@ public class HashidsEncoderAdapter implements UrlEncoderPort {
 
   private Hashids hashids;
 
-  public HashidsEncoderAdapter(
+  public UrlEncoderAdapter(
       @Value("${app.hashids.salt}") String salt,
       @Value("${app.hashids.min-length}") int minLength
   ) {

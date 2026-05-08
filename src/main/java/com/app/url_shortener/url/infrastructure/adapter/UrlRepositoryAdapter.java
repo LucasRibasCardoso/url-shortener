@@ -1,4 +1,4 @@
-package com.app.url_shortener.url.infrastructure.adapter.dynamo;
+package com.app.url_shortener.url.infrastructure.adapter;
 
 import com.app.url_shortener.url.application.port.output.UrlRepositoryPort;
 import com.app.url_shortener.url.domain.exception.ShortCodeCollisionException;

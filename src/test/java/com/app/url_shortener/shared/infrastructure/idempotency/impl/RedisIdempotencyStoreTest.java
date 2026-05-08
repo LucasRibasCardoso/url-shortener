@@ -104,7 +104,7 @@ class RedisIdempotencyStoreTest extends BaseRedisSliceTest {
 
     @Test
     @DisplayName("Deve desserializar resposta em cache salva como JSON no Redis")
-    void shouldDeserializeCachedResponseFromRedisJson() throws Exception {
+    void shouldDeserializeCachedResponseFromRedisJson() {
       // 1. Arrange
       var key = "completed-json";
       var cachedResponse = cachedResponse(201, "{\"id\":\"123\"}");
@@ -167,7 +167,7 @@ class RedisIdempotencyStoreTest extends BaseRedisSliceTest {
 
     @Test
     @DisplayName("Deve serializar resposta em cache e salvar com TTL")
-    void shouldSerializeCachedResponseAndSaveWithTtl() throws Exception {
+    void shouldSerializeCachedResponseAndSaveWithTtl() {
       // 1. Arrange
       var key = "completed-save";
       var redisKey = redisKey(key);

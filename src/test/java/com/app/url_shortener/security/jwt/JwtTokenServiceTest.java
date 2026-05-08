@@ -57,7 +57,7 @@ class JwtTokenServiceTest {
       var userId = UUID.randomUUID();
       var authorities = List.of("ROLE_USER", "url:create", "url:read");
       var subject = new JwtAccessTokenSubject(userId, "PREMIUM", authorities);
-      var encodedJwt = jwt("encoded-access-token");
+      var encodedJwt = jwt();
 
       given(jwtProperties.issuer()).willReturn(issuer);
       given(jwtProperties.accessTokenExpirationSeconds()).willReturn(expirationSeconds);
@@ -93,9 +93,9 @@ class JwtTokenServiceTest {
     }
   }
 
-  private static Jwt jwt(String tokenValue) {
+  private static Jwt jwt() {
     return new Jwt(
-            tokenValue,
+            "encoded-access-token",
             Instant.now(),
             Instant.now().plusSeconds(900),
             Map.of("alg", "HS256"),

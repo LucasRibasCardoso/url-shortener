@@ -65,7 +65,7 @@ class UrlMapperTest {
     @DisplayName("Deve mapear entidade para domínio com data convertida para LocalDateTime")
     void shouldMapEntityToDomainWithCreatedAtConvertedToLocalDateTime() {
       // 1. Arrange
-      var entity = urlEntity("aB3dE", "https://google.com", "2026-05-07T10:15:30");
+      var entity = urlEntity();
 
       // 2. Act
       var result = mapper.toDomain(entity);
@@ -98,7 +98,7 @@ class UrlMapperTest {
     @DisplayName("Deve criar domínio a partir da entidade")
     void shouldCreateDomainFromEntity() {
       // 1. Arrange
-      var entity = urlEntity("aB3dE", "https://google.com", "2026-05-07T10:15:30");
+      var entity = urlEntity();
 
       // 2. Act
       var result = mapper.createUrl(entity);
@@ -180,11 +180,11 @@ class UrlMapperTest {
     }
   }
 
-  private UrlEntity urlEntity(String shortCode, String originalUrl, String createdAt) {
+  private UrlEntity urlEntity() {
     return UrlEntity.builder()
-        .shortCode(shortCode)
-        .originalUrl(originalUrl)
-        .createdAt(createdAt)
+        .shortCode("aB3dE")
+        .originalUrl("https://google.com")
+        .createdAt("2026-05-07T10:15:30")
         .build();
   }
 }

@@ -29,9 +29,10 @@ public interface UrlMapper {
     }
 
     return Url.restore(
-        entity.getShortCode(),
-        entity.getOriginalUrl(),
-        stringToLocalDateTime(entity.getCreatedAt()));
+            entity.getUserId(),
+            entity.getShortCode(),
+            entity.getOriginalUrl(),
+            stringToLocalDateTime(entity.getCreatedAt()));
   }
 
   @Named("localDateTimeToString")

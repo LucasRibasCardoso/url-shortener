@@ -22,10 +22,11 @@ fi
 
 "${DDB_CMD[@]}" create-table \
     --table-name url \
-    --attribute-definitions AttributeName=shortCode,AttributeType=S \
+    --attribute-definitions AttributeName=shortCode,AttributeType=S AttributeName=userId,AttributeType=S \
     --key-schema AttributeName=shortCode,KeyType=HASH \
+    --global-secondary-indexes "IndexName=user-index,KeySchema=[{AttributeName=userId,KeyType=HASH}],Projection={ProjectionType=ALL}" \
     --billing-mode PAY_PER_REQUEST \
     --region "$REGION"
 
 echo "DynamoDB table 'url' created successfully."
-echo "Store item attributes: shortcode (S), long_url (S), created_at (S in ISO-8601 or N in epoch)."
+echo "Store item attributes: shortcode (S), long_url (S), created_at (S in ISO-8601 or N in epoch), userId (S)."

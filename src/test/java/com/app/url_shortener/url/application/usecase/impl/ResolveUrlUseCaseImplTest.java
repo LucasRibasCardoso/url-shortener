@@ -1,5 +1,6 @@
-package com.app.url_shortener.url.application.usecase.imp;
+package com.app.url_shortener.url.application.usecase.impl;
 
+import com.app.url_shortener.url.application.command.ResolveUrlCommand;
 import com.app.url_shortener.url.application.port.output.UrlRepositoryPort;
 import com.app.url_shortener.url.domain.exception.UrlNotFoundException;
 import com.app.url_shortener.url.domain.model.Url;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,13 +25,13 @@ import static org.mockito.Mockito.when;
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes de Unidade - Caso de Uso de Resolução de URL")
-class ResolveUrlUseCaseImpTest {
+class ResolveUrlUseCaseImplTest {
 
   @Mock
   private UrlRepositoryPort urlRepositoryPort;
 
   @InjectMocks
-  private ResolveUrlUseCaseImp resolveUrlUseCaseImp;
+  private ResolveUrlUseCaseImpl resolveUrlUseCase;
 
   @Nested
   @DisplayName("Execução")
@@ -39,16 +41,18 @@ class ResolveUrlUseCaseImpTest {
     @DisplayName("Deve retornar a URL original quando o código curto existir")
     void shouldReturnOriginalUrlWhenShortCodeExists() {
       // 1. Arrange
+      var userId = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
       var shortCode = "aB3dE";
+      var command = new ResolveUrlCommand(shortCode);
       var originalUrl = "https://google.com";
-      var url = Url.create(shortCode, originalUrl);
+      var url = Url.create(userId, shortCode, originalUrl);
       when(urlRepositoryPort.findByShortCode(shortCode)).thenReturn(Optional.of(url));
 
       // 2. Act
-      var result = resolveUrlUseCaseImp.execute(shortCode);
+      var result = resolveUrlUseCase.execute(command);
 
       // 3. Assert
-      assertThat(result).isEqualTo(originalUrl);
+      assertThat(result.originalUrl()).isEqualTo(originalUrl);
       verify(urlRepositoryPort).findByShortCode(shortCode);
       verifyNoMoreInteractions(urlRepositoryPort);
     }
@@ -58,10 +62,11 @@ class ResolveUrlUseCaseImpTest {
     void shouldThrowUrlNotFoundExceptionWhenShortCodeDoesNotExist() {
       // 1. Arrange
       var shortCode = "invalid";
+      var command = new ResolveUrlCommand(shortCode);
       when(urlRepositoryPort.findByShortCode(shortCode)).thenReturn(Optional.empty());
 
       // 2. Act & 3. Assert
-      assertThatThrownBy(() -> resolveUrlUseCaseImp.execute(shortCode))
+      assertThatThrownBy(() -> resolveUrlUseCase.execute(command))
           .isInstanceOf(UrlNotFoundException.class);
       verify(urlRepositoryPort).findByShortCode(shortCode);
       verifyNoMoreInteractions(urlRepositoryPort);

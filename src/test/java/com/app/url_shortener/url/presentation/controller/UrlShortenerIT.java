@@ -11,7 +11,7 @@ import static org.mockito.Mockito.doThrow;
 import com.app.url_shortener.config.AbstractIntegrationTest;
 import com.app.url_shortener.url.application.port.output.UrlRepositoryPort;
 import com.app.url_shortener.url.domain.exception.ShortCodeCollisionException;
-import com.app.url_shortener.url.presentation.dto.request.ShortenUrlRequest;
+import com.app.url_shortener.url.presentation.dto.request.ShortenUrlRequestDto;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class UrlShortenerIT extends AbstractIntegrationTest {
     @DisplayName("Deve encurtar uma URL e realizar o redirecionamento com sucesso")
     void shouldShortenUrlAndRedirectSuccessfully() {
       // Arrange
-      ShortenUrlRequest request = new ShortenUrlRequest("https://www.google.com");
+      ShortenUrlRequestDto request = new ShortenUrlRequestDto("https://www.google.com");
 
       // Act
       Response shortenResponse =
@@ -84,7 +84,7 @@ public class UrlShortenerIT extends AbstractIntegrationTest {
     @DisplayName("Deve retornar 400 quando a originalUrl for inválida")
     @ParameterizedTest(name = "originalUrl == {0}")
     @MethodSource("invalidRequests")
-    void shouldReturnBadRequestForInvalidOriginalUrl(ShortenUrlRequest invalidRequest) {
+    void shouldReturnBadRequestForInvalidOriginalUrl(ShortenUrlRequestDto invalidRequest) {
       // Arrange
 
       // Act
@@ -107,9 +107,9 @@ public class UrlShortenerIT extends AbstractIntegrationTest {
 
     private static Stream<Arguments> invalidRequests() {
       return Stream.of(
-          Arguments.of("nulo", new ShortenUrlRequest(null)),
-          Arguments.of("vazio", new ShortenUrlRequest("")),
-          Arguments.of("inválido", new ShortenUrlRequest("apenas-uma-string-qualquer")));
+          Arguments.of("nulo", new ShortenUrlRequestDto(null)),
+          Arguments.of("vazio", new ShortenUrlRequestDto("")),
+          Arguments.of("inválido", new ShortenUrlRequestDto("apenas-uma-string-qualquer")));
     }
   }
 
@@ -143,7 +143,7 @@ public class UrlShortenerIT extends AbstractIntegrationTest {
       // Arrange
       doThrow(new ShortCodeCollisionException()).when(urlRepositoryPortMock).save(any());
 
-      ShortenUrlRequest request = new ShortenUrlRequest("https://www.google.com");
+      ShortenUrlRequestDto request = new ShortenUrlRequestDto("https://www.google.com");
 
       // Act
       Response response =
@@ -170,7 +170,7 @@ public class UrlShortenerIT extends AbstractIntegrationTest {
     @DisplayName("Deve servir do cache após a primeira requisição")
     void shouldServeFromCacheAfterFirstRequest() {
       // Arrange
-      ShortenUrlRequest request = new ShortenUrlRequest("https://www.google.com");
+      ShortenUrlRequestDto request = new ShortenUrlRequestDto("https://www.google.com");
 
       Response shortenResponse =
           given()

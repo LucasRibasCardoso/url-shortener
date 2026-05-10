@@ -9,12 +9,15 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("unit")
 @DisplayName("Testes de Unidade - Mapper de URL")
 class UrlMapperTest {
+
+  private static final UUID USER_ID = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
 
   private UrlMapper mapper;
 
@@ -32,12 +35,13 @@ class UrlMapperTest {
     void shouldMapDomainToEntityWithCreatedAtConvertedToString() {
       // 1. Arrange
       var createdAt = LocalDateTime.of(2026, 5, 7, 10, 15, 30);
-      var url = Url.restore("aB3dE", "https://google.com", createdAt);
+      var url = Url.restore(USER_ID, "aB3dE", "https://google.com", createdAt);
 
       // 2. Act
       var result = mapper.toEntity(url);
 
       // 3. Assert
+      assertThat(result.getUserId()).isEqualTo(USER_ID);
       assertThat(result.getShortCode()).isEqualTo("aB3dE");
       assertThat(result.getOriginalUrl()).isEqualTo("https://google.com");
       assertThat(result.getCreatedAt()).isEqualTo("2026-05-07T10:15:30");
@@ -71,6 +75,7 @@ class UrlMapperTest {
       var result = mapper.toDomain(entity);
 
       // 3. Assert
+      assertThat(result.getUserId()).isEqualTo(USER_ID);
       assertThat(result.getShortCode()).isEqualTo("aB3dE");
       assertThat(result.getOriginalUrl()).isEqualTo("https://google.com");
       assertThat(result.getCreatedAt()).isEqualTo(LocalDateTime.of(2026, 5, 7, 10, 15, 30));
@@ -104,6 +109,7 @@ class UrlMapperTest {
       var result = mapper.createUrl(entity);
 
       // 3. Assert
+      assertThat(result.getUserId()).isEqualTo(USER_ID);
       assertThat(result.getShortCode()).isEqualTo("aB3dE");
       assertThat(result.getOriginalUrl()).isEqualTo("https://google.com");
       assertThat(result.getCreatedAt()).isEqualTo(LocalDateTime.of(2026, 5, 7, 10, 15, 30));
@@ -185,6 +191,7 @@ class UrlMapperTest {
         .shortCode("aB3dE")
         .originalUrl("https://google.com")
         .createdAt("2026-05-07T10:15:30")
+        .userId(USER_ID)
         .build();
   }
 }

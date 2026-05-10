@@ -19,6 +19,7 @@ import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +35,8 @@ import static org.mockito.Mockito.when;
 @DisplayName("Testes de Unidade - Adaptador de Repositório de URL")
 @SuppressWarnings({"unchecked", "rawtypes"})
 class UrlRepositoryAdapterTest {
+
+  private static final UUID USER_ID = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
 
   @Mock
   private DynamoDbTable<UrlEntity> urlTable;
@@ -52,7 +55,7 @@ class UrlRepositoryAdapterTest {
     @DisplayName("Deve mapear domínio e salvar entidade com condição contra colisão de código curto")
     void shouldMapDomainAndSaveEntityWithShortCodeCollisionCondition() {
       // 1. Arrange
-      var url = Url.restore("aB3dE", "https://google.com", LocalDateTime.of(2026, 5, 7, 10, 0));
+      var url = Url.restore(USER_ID, "aB3dE", "https://google.com", LocalDateTime.of(2026, 5, 7, 10, 0));
       var entity = urlEntity("aB3dE", "https://google.com", "2026-05-07T10:00");
       when(urlMapper.toEntity(url)).thenReturn(entity);
 
@@ -76,7 +79,7 @@ class UrlRepositoryAdapterTest {
     @DisplayName("Deve traduzir falha condicional do DynamoDB para colisão de código curto")
     void shouldTranslateConditionalCheckFailureToShortCodeCollisionException() {
       // 1. Arrange
-      var url = Url.restore("aB3dE", "https://google.com", LocalDateTime.of(2026, 5, 7, 10, 0));
+      var url = Url.restore(USER_ID, "aB3dE", "https://google.com", LocalDateTime.of(2026, 5, 7, 10, 0));
       var entity = urlEntity("aB3dE", "https://google.com", "2026-05-07T10:00");
       var exception = ConditionalCheckFailedException.builder().message("collision").build();
       when(urlMapper.toEntity(url)).thenReturn(entity);
@@ -101,7 +104,7 @@ class UrlRepositoryAdapterTest {
       // 1. Arrange
       var shortCode = "aB3dE";
       var entity = urlEntity(shortCode, "https://google.com", "2026-05-07T10:00");
-      var url = Url.restore(shortCode, "https://google.com", LocalDateTime.of(2026, 5, 7, 10, 0));
+      var url = Url.restore(USER_ID, shortCode, "https://google.com", LocalDateTime.of(2026, 5, 7, 10, 0));
       when(urlTable.getItem(anyGetItemRequestConsumer())).thenReturn(entity);
       when(urlMapper.toDomain(entity)).thenReturn(url);
 
@@ -141,6 +144,7 @@ class UrlRepositoryAdapterTest {
         .shortCode(shortCode)
         .originalUrl(originalUrl)
         .createdAt(createdAt)
+        .userId(USER_ID)
         .build();
   }
 

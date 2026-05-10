@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,6 +16,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Tag("unit")
 @DisplayName("Testes de Unidade - Entidade Url")
 class UrlTest {
+
+  private static final UUID USER_ID = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
 
   @Nested
   @DisplayName("Criação")
@@ -28,9 +31,10 @@ class UrlTest {
       var originalUrl = "https://example.com/articles/1";
 
       // 2. Act
-      var url = Url.create(shortCode, originalUrl);
+      var url = Url.create(USER_ID, shortCode, originalUrl);
 
       // 3. Assert
+      assertThat(url.getUserId()).isEqualTo(USER_ID);
       assertThat(url.getShortCode()).isEqualTo(shortCode);
       assertThat(url.getOriginalUrl()).isEqualTo(originalUrl);
       assertThat(url.getCreatedAt()).isNotNull();
@@ -44,9 +48,10 @@ class UrlTest {
       var originalUrl = "  https://example.com/articles/1  ";
 
       // 2. Act
-      var url = Url.create(shortCode, originalUrl);
+      var url = Url.create(USER_ID, shortCode, originalUrl);
 
       // 3. Assert
+      assertThat(url.getUserId()).isEqualTo(USER_ID);
       assertThat(url.getShortCode()).isEqualTo("abc123");
       assertThat(url.getOriginalUrl()).isEqualTo("https://example.com/articles/1");
     }
@@ -65,9 +70,10 @@ class UrlTest {
       var createdAt = LocalDateTime.of(2026, 5, 7, 10, 15);
 
       // 2. Act
-      var url = Url.restore(shortCode, originalUrl, createdAt);
+      var url = Url.restore(USER_ID, shortCode, originalUrl, createdAt);
 
       // 3. Assert
+      assertThat(url.getUserId()).isEqualTo(USER_ID);
       assertThat(url.getShortCode()).isEqualTo(shortCode);
       assertThat(url.getOriginalUrl()).isEqualTo(originalUrl);
       assertThat(url.getCreatedAt()).isEqualTo(createdAt);
@@ -86,7 +92,7 @@ class UrlTest {
       var originalUrl = "https://example.com/articles/1";
 
       // 2. Act & 3. Assert
-      assertThatThrownBy(() -> Url.create(invalidShortCode, originalUrl))
+      assertThatThrownBy(() -> Url.create(USER_ID, invalidShortCode, originalUrl))
               .isInstanceOf(NullPointerException.class)
               .hasMessage("shortCode is required.");
     }
@@ -99,9 +105,23 @@ class UrlTest {
       var shortCode = "abc123";
 
       // 2. Act & 3. Assert
-      assertThatThrownBy(() -> Url.create(shortCode, invalidOriginalUrl))
+      assertThatThrownBy(() -> Url.create(USER_ID, shortCode, invalidOriginalUrl))
               .isInstanceOf(NullPointerException.class)
               .hasMessage("originalUrl is required.");
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @DisplayName("Deve lançar NullPointerException quando o usuário for nulo")
+    void shouldThrowExceptionWhenUserIdIsNull(UUID invalidUserId) {
+      // 1. Arrange
+      var shortCode = "abc123";
+      var originalUrl = "https://example.com/articles/1";
+
+      // 2. Act & 3. Assert
+      assertThatThrownBy(() -> Url.create(invalidUserId, shortCode, originalUrl))
+              .isInstanceOf(NullPointerException.class)
+              .hasMessage("userId is required.");
     }
 
     @ParameterizedTest
@@ -112,7 +132,7 @@ class UrlTest {
       var originalUrl = "https://example.com/articles/1";
 
       // 2. Act
-      var url = Url.create(blankShortCode, originalUrl);
+      var url = Url.create(USER_ID, blankShortCode, originalUrl);
 
       // 3. Assert
       assertThat(url.getShortCode()).isEmpty();
@@ -127,7 +147,7 @@ class UrlTest {
       var shortCode = "abc123";
 
       // 2. Act
-      var url = Url.create(shortCode, blankOriginalUrl);
+      var url = Url.create(USER_ID, shortCode, blankOriginalUrl);
 
       // 3. Assert
       assertThat(url.getShortCode()).isEqualTo(shortCode);
@@ -144,8 +164,8 @@ class UrlTest {
     void shouldBeEqualWhenAllFieldsAreEqual() {
       // 1. Arrange
       var createdAt = LocalDateTime.of(2026, 5, 7, 10, 15);
-      var firstUrl = Url.restore("abc123", "https://example.com/articles/1", createdAt);
-      var secondUrl = Url.restore("abc123", "https://example.com/articles/1", createdAt);
+      var firstUrl = Url.restore(USER_ID, "abc123", "https://example.com/articles/1", createdAt);
+      var secondUrl = Url.restore(USER_ID, "abc123", "https://example.com/articles/1", createdAt);
 
       // 2. Act & 3. Assert
       assertThat(firstUrl)
@@ -158,15 +178,22 @@ class UrlTest {
     void shouldNotBeEqualWhenAnyFieldIsDifferent() {
       // 1. Arrange
       var createdAt = LocalDateTime.of(2026, 5, 7, 10, 15);
-      var url = Url.restore("abc123", "https://example.com/articles/1", createdAt);
-      var differentShortCode = Url.restore("xyz789", "https://example.com/articles/1", createdAt);
-      var differentOriginalUrl = Url.restore("abc123", "https://example.com/articles/2", createdAt);
+      var url = Url.restore(USER_ID, "abc123", "https://example.com/articles/1", createdAt);
+      var differentUserId = Url.restore(
+              UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac002"),
+              "abc123",
+              "https://example.com/articles/1",
+              createdAt);
+      var differentShortCode = Url.restore(USER_ID, "xyz789", "https://example.com/articles/1", createdAt);
+      var differentOriginalUrl = Url.restore(USER_ID, "abc123", "https://example.com/articles/2", createdAt);
       var differentCreatedAt = Url.restore(
+              USER_ID,
               "abc123",
               "https://example.com/articles/1",
               createdAt.plusMinutes(1));
 
       // 2. Act & 3. Assert
+      assertThat(url).isNotEqualTo(differentUserId);
       assertThat(url).isNotEqualTo(differentShortCode);
       assertThat(url).isNotEqualTo(differentOriginalUrl);
       assertThat(url).isNotEqualTo(differentCreatedAt);

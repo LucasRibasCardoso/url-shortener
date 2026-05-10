@@ -1,0 +1,252 @@
+package com.app.url_shortener.url.presentation.mapper;
+
+import com.app.url_shortener.url.application.result.PageUrlResult;
+import com.app.url_shortener.url.application.result.ShortenUrlResult;
+import com.app.url_shortener.url.application.result.UrlDetailsResult;
+import com.app.url_shortener.url.presentation.dto.request.ShortenUrlRequestDto;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+@Tag("unit")
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Testes de Unidade - Mapper Web de URL")
+class UrlWebMapperTest {
+
+  private final UrlWebMapper mapper = Mappers.getMapper(UrlWebMapper.class);
+
+  @Nested
+  @DisplayName("Mapeamento para Comandos")
+  class ToCommandTests {
+
+    @Test
+    @DisplayName("Deve mapear request de encurtamento para comando")
+    void shouldMapShortenUrlRequestToCommand() {
+      // 1. Arrange
+      var userId = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
+      var request = new ShortenUrlRequestDto("  https://google.com  ");
+
+      // 2. Act
+      var command = mapper.toCommand(request, userId);
+
+      // 3. Assert
+      assertAll(
+          () -> assertThat(command.userId()).isEqualTo(userId),
+          () -> assertThat(command.originalUrl()).isEqualTo("https://google.com")
+      );
+    }
+
+    @Test
+    @DisplayName("Deve mapear dados de detalhes para comando")
+    void shouldMapUrlDetailsDataToCommand() {
+      // 1. Arrange
+      var requesterId = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
+      var shortCode = "  aB3dE  ";
+      var canReadAny = true;
+
+      // 2. Act
+      var command = mapper.toCommand(requesterId, shortCode, canReadAny);
+
+      // 3. Assert
+      assertAll(
+          () -> assertThat(command.requesterId()).isEqualTo(requesterId),
+          () -> assertThat(command.shortCode()).isEqualTo("aB3dE"),
+          () -> assertThat(command.canReadAny()).isTrue()
+      );
+    }
+
+    @Test
+    @DisplayName("Deve mapear dados de exclusão para comando")
+    void shouldMapDeleteDataToCommand() {
+      // 1. Arrange
+      var requesterId = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
+      var shortCode = "  aB3dE  ";
+      var canDeleteAny = true;
+
+      // 2. Act
+      var command = mapper.toCommandDelete(requesterId, shortCode, canDeleteAny);
+
+      // 3. Assert
+      assertAll(
+          () -> assertThat(command.requesterId()).isEqualTo(requesterId),
+          () -> assertThat(command.shortCode()).isEqualTo("aB3dE"),
+          () -> assertThat(command.canDeleteAny()).isTrue()
+      );
+    }
+
+    @Test
+    @DisplayName("Deve mapear dados de listagem para comando")
+    void shouldMapFindAllDataToCommand() {
+      // 1. Arrange
+      var userId = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
+      var limit = 20;
+      var cursor = "  next-page-cursor  ";
+
+      // 2. Act
+      var command = mapper.toCommand(userId, limit, cursor);
+
+      // 3. Assert
+      assertAll(
+          () -> assertThat(command.userId()).isEqualTo(userId),
+          () -> assertThat(command.limit()).isEqualTo(limit),
+          () -> assertThat(command.cursor()).isEqualTo("next-page-cursor")
+      );
+    }
+
+    @Test
+    @DisplayName("Deve mapear código curto para comando de resolução")
+    void shouldMapShortCodeToResolveCommand() {
+      // 1. Arrange
+      var shortCode = "  aB3dE  ";
+
+      // 2. Act
+      var command = mapper.toCommand(shortCode);
+
+      // 3. Assert
+      assertThat(command.shortCode()).isEqualTo("aB3dE");
+    }
+  }
+
+  @Nested
+  @DisplayName("Mapeamento para Respostas")
+  class ToResponseTests {
+
+    @Test
+    @DisplayName("Deve mapear resultado de encurtamento para resposta com URL curta completa")
+    void shouldMapShortenUrlResultToResponseWithFullShortUrl() {
+      // 1. Arrange
+      var createdAt = LocalDateTime.of(2026, 5, 10, 14, 30);
+      var result = new ShortenUrlResult("https://google.com", "aB3dE", createdAt);
+      var baseUrl = "https://sho.rt";
+
+      // 2. Act
+      var response = mapper.toResponse(result, baseUrl);
+
+      // 3. Assert
+      assertAll(
+          () -> assertThat(response.originalUrl()).isEqualTo(result.originalUrl()),
+          () -> assertThat(response.shortUrl()).isEqualTo("https://sho.rt/r/aB3dE"),
+          () -> assertThat(response.createdAt()).isEqualTo(createdAt)
+      );
+    }
+
+    @Test
+    @DisplayName("Deve mapear resultado de detalhes para resposta com URL base terminada em barra")
+    void shouldMapUrlDetailsResultToResponseWhenBaseUrlEndsWithSlash() {
+      // 1. Arrange
+      var createdAt = LocalDateTime.of(2026, 5, 10, 14, 30);
+      var result = new UrlDetailsResult("https://google.com", "aB3dE", createdAt);
+      var baseUrl = "https://sho.rt/";
+
+      // 2. Act
+      var response = mapper.toResponse(result, baseUrl);
+
+      // 3. Assert
+      assertAll(
+          () -> assertThat(response.originalUrl()).isEqualTo(result.originalUrl()),
+          () -> assertThat(response.shortUrl()).isEqualTo("https://sho.rt/r/aB3dE"),
+          () -> assertThat(response.createdAt()).isEqualTo(createdAt)
+      );
+    }
+
+    @Test
+    @DisplayName("Deve mapear resultado paginado para resposta propagando URL base")
+    void shouldMapPageUrlResultToResponsePropagatingBaseUrl() {
+      // 1. Arrange
+      var firstCreatedAt = LocalDateTime.of(2026, 5, 10, 14, 30);
+      var secondCreatedAt = LocalDateTime.of(2026, 5, 10, 15, 45);
+      var result = new PageUrlResult(List.of(
+          new UrlDetailsResult("https://google.com", "aB3dE", firstCreatedAt),
+          new UrlDetailsResult("https://spring.io", "fG4hI", secondCreatedAt)
+      ), "next-page-cursor");
+      var baseUrl = "https://sho.rt";
+
+      // 2. Act
+      var response = mapper.toResponse(result, baseUrl);
+
+      // 3. Assert
+      assertAll(
+          () -> assertThat(response.nextCursor()).isEqualTo(result.nextCursor()),
+          () -> assertThat(response.urls()).hasSize(2),
+          () -> assertThat(response.urls().get(0).originalUrl()).isEqualTo("https://google.com"),
+          () -> assertThat(response.urls().get(0).shortUrl()).isEqualTo("https://sho.rt/r/aB3dE"),
+          () -> assertThat(response.urls().get(0).createdAt()).isEqualTo(firstCreatedAt),
+          () -> assertThat(response.urls().get(1).originalUrl()).isEqualTo("https://spring.io"),
+          () -> assertThat(response.urls().get(1).shortUrl()).isEqualTo("https://sho.rt/r/fG4hI"),
+          () -> assertThat(response.urls().get(1).createdAt()).isEqualTo(secondCreatedAt)
+      );
+    }
+  }
+
+  @Nested
+  @DisplayName("Conversão de URL Curta")
+  class ShortUrlConversionTests {
+
+    @Test
+    @DisplayName("Deve montar URL curta completa quando URL base não terminar em barra")
+    void shouldBuildFullShortUrlWhenBaseUrlDoesNotEndWithSlash() {
+      // 1. Arrange
+      var shortCode = "aB3dE";
+      var baseUrl = "https://sho.rt";
+
+      // 2. Act
+      var result = mapper.toFullShortUrl(shortCode, baseUrl);
+
+      // 3. Assert
+      assertThat(result).isEqualTo("https://sho.rt/r/aB3dE");
+    }
+
+    @Test
+    @DisplayName("Deve montar URL curta completa quando URL base terminar em barra")
+    void shouldBuildFullShortUrlWhenBaseUrlEndsWithSlash() {
+      // 1. Arrange
+      var shortCode = "aB3dE";
+      var baseUrl = "https://sho.rt/";
+
+      // 2. Act
+      var result = mapper.toFullShortUrl(shortCode, baseUrl);
+
+      // 3. Assert
+      assertThat(result).isEqualTo("https://sho.rt/r/aB3dE");
+    }
+
+    @Test
+    @DisplayName("Deve retornar nulo quando código curto for nulo")
+    void shouldReturnNullWhenShortCodeIsNull() {
+      // 1. Arrange
+      String shortCode = null;
+      var baseUrl = "https://sho.rt";
+
+      // 2. Act
+      var result = mapper.toFullShortUrl(shortCode, baseUrl);
+
+      // 3. Assert
+      assertThat(result).isNull();
+    }
+
+    @Test
+    @DisplayName("Deve retornar nulo quando URL base for nula")
+    void shouldReturnNullWhenBaseUrlIsNull() {
+      // 1. Arrange
+      var shortCode = "aB3dE";
+      String baseUrl = null;
+
+      // 2. Act
+      var result = mapper.toFullShortUrl(shortCode, baseUrl);
+
+      // 3. Assert
+      assertThat(result).isNull();
+    }
+  }
+}

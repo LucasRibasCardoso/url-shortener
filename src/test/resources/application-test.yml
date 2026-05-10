@@ -1,4 +1,15 @@
 spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
   data:
     redis:
       host: localhost
@@ -22,3 +33,8 @@ app:
     min-length: 7
   id-generator:
     block-size: 1000
+  security:
+    jwt:
+      secret: "rTtcljj9j9k16M65zQOnxjc1ujxwmyrmAVOJZ1dlEws="
+      issuer: ${spring.application.name}
+      access-token-expiration-minutes: 15

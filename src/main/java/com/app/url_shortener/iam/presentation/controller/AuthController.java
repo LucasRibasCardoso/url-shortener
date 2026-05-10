@@ -28,6 +28,7 @@ import java.time.Duration;
 public class AuthController {
 
   public static final Duration DEFAULT_MAX_AGE = Duration.ofDays(7);
+
   private final IamWebMapper iamWebMapper;
   private final LoginUseCase loginUseCase;
   private final LogoutUseCase logoutUseCase;
@@ -68,7 +69,8 @@ public class AuthController {
   public ResponseEntity<RefreshTokenResponseDto> refresh(@CookieValue(required = false) String refreshToken) {
     if (refreshToken == null || refreshToken.isBlank()) throw new InvalidRefreshTokenException();
 
-    RefreshTokenResult result = refreshTokenUseCase.execute(new RefreshTokenCommand(refreshToken));
+    RefreshTokenCommand command = iamWebMapper.toRefreshTokenCommand(refreshToken);
+    RefreshTokenResult result = refreshTokenUseCase.execute(command);
     RefreshTokenResponseDto response = iamWebMapper.toResponse(result);
 
     ResponseCookie cookie = buildRefreshTokenCookie(result.newRefreshToken());
@@ -77,7 +79,9 @@ public class AuthController {
 
   @PostMapping("/logout")
   public ResponseEntity<Void> logout(@CookieValue(required = false) String refreshToken) {
-    logoutUseCase.execute(new LogoutCommand(refreshToken));
+    LogoutCommand command = iamWebMapper.toLogoutCommand(refreshToken);
+    logoutUseCase.execute(command);
+
     ResponseCookie expiredCookie = buildExpireRefreshTokenCookie();
     return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, expiredCookie.toString()).build();
   }

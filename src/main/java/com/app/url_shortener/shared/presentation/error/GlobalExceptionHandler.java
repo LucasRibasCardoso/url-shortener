@@ -10,6 +10,7 @@ import com.app.url_shortener.shared.exception.unauthorized.UnauthorizedException
 import com.app.url_shortener.shared.exception.validation.DomainValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -81,6 +82,17 @@ public class GlobalExceptionHandler {
             "Proibido",
             ProblemType.FORBIDDEN,
             exception
+    );
+  }
+
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  public ProblemDetail handleAuthorizationDenied(AuthorizationDeniedException exception) {
+    return problemDetailFactory.create(
+            HttpStatus.FORBIDDEN,
+            "Acesso negado",
+            CommonErrorCode.AUTH_ACCESS_DENIED.getMessage(),
+            ProblemType.FORBIDDEN,
+            CommonErrorCode.AUTH_ACCESS_DENIED
     );
   }
 
@@ -172,5 +184,4 @@ public class GlobalExceptionHandler {
     );
   }
 }
-
 

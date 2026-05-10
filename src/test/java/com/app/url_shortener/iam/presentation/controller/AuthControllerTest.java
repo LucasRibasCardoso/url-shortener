@@ -264,6 +264,7 @@ class AuthControllerTest extends BaseWebSliceTest {
       var result = new RefreshTokenResult("new-refresh-token", "new-access-token");
       var response = new RefreshTokenResponseDto(result.newAccessToken());
 
+      given(iamWebMapper.toRefreshTokenCommand(refreshToken)).willReturn(command);
       given(refreshTokenUseCase.execute(command)).willReturn(result);
       given(iamWebMapper.toResponse(result)).willReturn(response);
 
@@ -278,6 +279,7 @@ class AuthControllerTest extends BaseWebSliceTest {
               .andExpect(jsonPath("$.newAccessToken").value(response.newAccessToken()))
               .andExpect(refreshTokenCookie("new-refresh-token", "604800"));
 
+      verify(iamWebMapper).toRefreshTokenCommand(refreshToken);
       verify(refreshTokenUseCase).execute(command);
       verify(iamWebMapper).toResponse(result);
       verifyNoMoreInteractions(refreshTokenUseCase, iamWebMapper);
@@ -336,6 +338,7 @@ class AuthControllerTest extends BaseWebSliceTest {
       // 1. Arrange
       var refreshToken = "raw-refresh-token";
       var command = new LogoutCommand(refreshToken);
+      given(iamWebMapper.toLogoutCommand(refreshToken)).willReturn(command);
 
       // 2. Act
       ResultActions resultActions = mockMvc.perform(post(AUTH_BASE_PATH + "/logout")
@@ -352,8 +355,9 @@ class AuthControllerTest extends BaseWebSliceTest {
               .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("HttpOnly")))
               .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("SameSite=Strict")));
 
+      verify(iamWebMapper).toLogoutCommand(refreshToken);
       verify(logoutUseCase).execute(command);
-      verifyNoMoreInteractions(logoutUseCase);
+      verifyNoMoreInteractions(iamWebMapper, logoutUseCase);
     }
   }
 

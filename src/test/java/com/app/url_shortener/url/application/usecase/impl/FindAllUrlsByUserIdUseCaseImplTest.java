@@ -1,0 +1,89 @@
+package com.app.url_shortener.url.application.usecase.impl;
+
+import com.app.url_shortener.url.application.command.FindAllUrlsByUserIdCommand;
+import com.app.url_shortener.url.application.port.output.UrlRepositoryPort;
+import com.app.url_shortener.url.application.result.PageUrlResult;
+import com.app.url_shortener.url.application.result.UrlDetailsResult;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+@Tag("unit")
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Testes de Unidade - Caso de Uso de Listagem de URLs por Usuário")
+class FindAllUrlsByUserIdUseCaseImplTest {
+
+  @Mock
+  private UrlRepositoryPort urlRepositoryPort;
+
+  @InjectMocks
+  private FindAllUrlsByUserIdUseCaseImpl findAllUrlsByUserIdUseCase;
+
+  @Nested
+  @DisplayName("Execução")
+  class ExecuteTests {
+
+    @Test
+    @DisplayName("Deve buscar URLs do usuário com paginação e retornar o resultado do repositório")
+    void shouldFindUrlsByUserIdWithPaginationAndReturnRepositoryResult() {
+      // 1. Arrange
+      var userId = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
+      var limit = 10;
+      var cursor = "next-page-cursor";
+      var command = new FindAllUrlsByUserIdCommand(userId, limit, cursor);
+      var pageUrlResult = new PageUrlResult(List.of(
+          new UrlDetailsResult(
+              "https://google.com",
+              "aB3dE",
+              LocalDateTime.of(2026, 5, 10, 14, 30)),
+          new UrlDetailsResult(
+              "https://spring.io",
+              "fG4hI",
+              LocalDateTime.of(2026, 5, 10, 15, 45))
+      ), "following-page-cursor");
+      when(urlRepositoryPort.findAllByUserId(userId, limit, cursor)).thenReturn(pageUrlResult);
+
+      // 2. Act
+      var result = findAllUrlsByUserIdUseCase.execute(command);
+
+      // 3. Assert
+      assertThat(result).isSameAs(pageUrlResult);
+      verify(urlRepositoryPort).findAllByUserId(userId, limit, cursor);
+      verifyNoMoreInteractions(urlRepositoryPort);
+    }
+
+    @Test
+    @DisplayName("Deve buscar URLs do usuário sem cursor")
+    void shouldFindUrlsByUserIdWithoutCursor() {
+      // 1. Arrange
+      var userId = UUID.fromString("019a16f1-ae7f-7c9d-9e18-44773f1ac001");
+      var limit = 20;
+      String cursor = null;
+      var command = new FindAllUrlsByUserIdCommand(userId, limit, cursor);
+      var pageUrlResult = new PageUrlResult(List.of(), null);
+      when(urlRepositoryPort.findAllByUserId(userId, limit, cursor)).thenReturn(pageUrlResult);
+
+      // 2. Act
+      var result = findAllUrlsByUserIdUseCase.execute(command);
+
+      // 3. Assert
+      assertThat(result).isSameAs(pageUrlResult);
+      verify(urlRepositoryPort).findAllByUserId(userId, limit, cursor);
+      verifyNoMoreInteractions(urlRepositoryPort);
+    }
+  }
+}

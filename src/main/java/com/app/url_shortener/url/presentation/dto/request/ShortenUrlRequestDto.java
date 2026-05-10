@@ -1,4 +1,11 @@
 package com.app.url_shortener.url.presentation.dto.request;
 
-public record ShortenUrlRequestDto(String originalUrl) {
+import com.app.url_shortener.url.presentation.validator.ValidHttpUrl;
+import jakarta.validation.constraints.NotBlank;
+
+public record ShortenUrlRequestDto(
+    @NotBlank
+    @ValidHttpUrl
+    String originalUrl
+) {
 }

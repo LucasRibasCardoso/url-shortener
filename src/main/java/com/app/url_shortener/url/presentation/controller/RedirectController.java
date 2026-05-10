@@ -3,7 +3,6 @@ package com.app.url_shortener.url.presentation.controller;
 import com.app.url_shortener.url.application.command.ResolveUrlCommand;
 import com.app.url_shortener.url.application.result.ResolvedUrlResult;
 import com.app.url_shortener.url.application.usecase.ResolveUrlUseCase;
-import com.app.url_shortener.url.presentation.docs.RedirectControllerDocs;
 import com.app.url_shortener.url.presentation.mapper.UrlWebMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,7 @@ import java.net.URI;
 @RequestMapping("/r")
 @RestController
 @RequiredArgsConstructor
-public class RedirectController implements RedirectControllerDocs {
+public class RedirectController {
 
   private final UrlWebMapper urlWebMapper;
   private final ResolveUrlUseCase resolveUrlUseCase;
